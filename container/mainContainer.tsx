@@ -35,7 +35,7 @@ const MainContainer = ({ session }: { session: Session }) => {
         initialRouteName={walletName}
         screenOptions={{
           headerShown: true,
-          tabBarActiveTintColor: "#2ad14e",
+          tabBarActiveTintColor: "#0746F5",
           tabBarShowLabel: true,
           tabBarStyle: {
             backgroundColor: "white",
@@ -131,7 +131,7 @@ const MainContainer = ({ session }: { session: Session }) => {
         style={{
           width: getWidth() - 10,
           height: 2,
-          backgroundColor: "#2ad14e",
+          backgroundColor: "#0746F5",
           position: "absolute",
           bottom: 89,
           left: 15,

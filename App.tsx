@@ -6,6 +6,7 @@ import Account from "./components/Account";
 import { View } from "react-native";
 import { Session } from "@supabase/supabase-js";
 import MainContainer from "./container/mainContainer";
+import LoginContainer from "./container/loginContainer";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -26,7 +27,8 @@ export default function App() {
         <MainContainer session={session} />
       ) : (
         // <Account key={session.user.id} session={session} />
-        <Auth />
+        // <Auth />
+        <LoginContainer />
       )}
     </>
   );
