@@ -50,7 +50,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
   if (loading) {
     return (
       <View style={[styles.container, styles.horizontal]}>
-        <ActivityIndicator size="large" color="#0746F5" />
+        <ActivityIndicator size="large" color="#00cc1f" />
       </View>
     );
   }

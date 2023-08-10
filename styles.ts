@@ -1,11 +1,73 @@
-import { StyleSheet } from "react-native";
+import { StatusBar, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  sendRequestRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 30,
+    margin: 0,
+    height: "20%",
+  },
+  sendButton: {
+    fontSize: 24,
+    textAlign: "center",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  wrapperCustom: {
+    borderRadius: 8,
+    padding: 6,
+    width: "40%",
+    height: "7.5%",
+  },
+  listContainer: {
+    flex: 1,
+    marginTop: StatusBar.currentHeight || 0,
+    backgroundColor: "white",
+  },
+  item: {
+    backgroundColor: "#f9c2ff",
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 16,
+  },
+  personSending: {
+    fontWeight: "600",
+    fontSize: 22,
+  },
+  description: {
+    fontSize: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  wallet: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  balance: {
+    paddingTop: 20,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    backgroundColor: "#8dfc9e",
+    justifyContent: "center",
+    margin: 10,
+    borderRadius: 10,
+  },
+  yourBalance: {
+    fontSize: 20,
+    marginBottom: 6,
+  },
+  balanceFont: {
+    borderRadius: 5,
+    fontSize: 32,
+    marginBottom: 6,
+    paddingLeft: 4,
   },
   input: {
     height: 48,

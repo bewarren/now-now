@@ -15,6 +15,8 @@ import Test from "../components/Test";
 import { Session } from "@supabase/supabase-js";
 import Account from "../components/Account";
 import { Animated, Dimensions, View } from "react-native";
+import WalletScreen from "../Wallet/WalletScreen";
+import TransactionsScreen from "../Transactions/TransactionsScreen";
 
 // import ProfileContainer from "./profileContainer";
 
@@ -35,7 +37,7 @@ const MainContainer = ({ session }: { session: Session }) => {
         initialRouteName={walletName}
         screenOptions={{
           headerShown: true,
-          tabBarActiveTintColor: "#0746F5",
+          tabBarActiveTintColor: "#00cc1f",
           tabBarShowLabel: true,
           tabBarStyle: {
             backgroundColor: "white",
@@ -61,11 +63,10 @@ const MainContainer = ({ session }: { session: Session }) => {
             },
           })}
         >
-          {(props) => <Account key={session.user.id} session={session} />}
+          {(props) => <WalletScreen />}
         </Tab.Screen>
         <Tab.Screen
           name={paymentsName}
-          component={Test}
           options={{
             headerShown: true,
             tabBarIcon: ({ size, color }) => (
@@ -84,7 +85,11 @@ const MainContainer = ({ session }: { session: Session }) => {
               }).start();
             },
           })}
-        />
+        >
+          {(props) => (
+            <TransactionsScreen key={session.user.id} session={session} />
+          )}
+        </Tab.Screen>
         <Tab.Screen
           name={peopleName}
           component={Test}
@@ -131,7 +136,7 @@ const MainContainer = ({ session }: { session: Session }) => {
         style={{
           width: getWidth() - 10,
           height: 2,
-          backgroundColor: "#0746F5",
+          backgroundColor: "#00cc1f",
           position: "absolute",
           bottom: 89,
           left: 15,
