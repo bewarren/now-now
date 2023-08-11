@@ -17,6 +17,7 @@ import Account from "../components/Account";
 import { Animated, Dimensions, View } from "react-native";
 import WalletScreen from "../Wallet/WalletScreen";
 import TransactionsScreen from "../Transactions/TransactionsScreen";
+import FriendsScreen from "../Friends/FriendsScreen";
 
 // import ProfileContainer from "./profileContainer";
 
@@ -38,6 +39,7 @@ const MainContainer = ({ session }: { session: Session }) => {
         screenOptions={{
           headerShown: true,
           tabBarActiveTintColor: "#00cc1f",
+
           tabBarShowLabel: true,
           tabBarStyle: {
             backgroundColor: "white",
@@ -92,7 +94,7 @@ const MainContainer = ({ session }: { session: Session }) => {
         </Tab.Screen>
         <Tab.Screen
           name={peopleName}
-          component={Test}
+          component={FriendsScreen}
           options={{
             headerShown: true,
             tabBarIcon: ({ size, color }) => (
