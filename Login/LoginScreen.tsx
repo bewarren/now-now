@@ -9,6 +9,8 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import styles from "../styles";
 import { formValidationLogin, signInWithEmail } from "./loginFunctions";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEnvelope, faUnlock } from "@fortawesome/free-solid-svg-icons";
 
 const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
@@ -66,37 +68,49 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
         }}
         keyboardShouldPersistTaps="always"
       >
-        <TextInput
-          style={emailFocus ? styles.inputFocus : styles.input}
-          placeholder="Email"
-          placeholderTextColor="#aaaaaa"
-          onChangeText={(text) => setEmail(text)}
-          onFocus={() => {
-            setEmailFocus(true);
-          }}
-          onBlur={() => {
-            setEmailFocus(false);
-          }}
-          value={email}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={passwordFocus ? styles.inputFocus : styles.input}
-          placeholderTextColor="#aaaaaa"
-          secureTextEntry
-          placeholder="Password"
-          onChangeText={(text) => setPassword(text)}
-          onFocus={() => {
-            setPasswordFocus(true);
-          }}
-          onBlur={() => {
-            setPasswordFocus(false);
-          }}
-          value={password}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
+        <View style={emailFocus ? styles.inputFocus : styles.input}>
+          <FontAwesomeIcon
+            icon={faEnvelope}
+            color={emailFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
+          <TextInput
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={emailFocus ? "#8dfc9e" : "#aaaaaa"}
+            placeholder="Email"
+            onChangeText={(text) => setEmail(text)}
+            onFocus={() => {
+              setEmailFocus(true);
+            }}
+            onBlur={() => {
+              setEmailFocus(false);
+            }}
+            value={email}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
+        <View style={passwordFocus ? styles.inputFocus : styles.input}>
+          <FontAwesomeIcon
+            icon={faUnlock}
+            color={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
+          <TextInput
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
+            secureTextEntry
+            placeholder="Password"
+            onChangeText={(text) => setPassword(text)}
+            onFocus={() => {
+              setPasswordFocus(true);
+            }}
+            onBlur={() => {
+              setPasswordFocus(false);
+            }}
+            value={password}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
         <TouchableOpacity style={styles.button} onPress={() => onLoginPress()}>
           <Text style={styles.buttonTitle}>Log in</Text>
         </TouchableOpacity>
@@ -109,14 +123,6 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
             </Text>
           </Text>
         </View>
-        {/* <View style={styles.footerView}>
-          <Text style={styles.footerText}>
-            Forgot password?{" "}
-            <Text onPress={onResetPasswordPress} style={styles.footerLink}>
-              Reset
-            </Text>
-          </Text>
-        </View> */}
       </KeyboardAwareScrollView>
     </View>
   );

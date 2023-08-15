@@ -18,6 +18,7 @@ import { Animated, Dimensions, View } from "react-native";
 import WalletScreen from "../Wallet/WalletScreen";
 import TransactionsScreen from "../Transactions/TransactionsScreen";
 import FriendsScreen from "../Friends/FriendsScreen";
+import FriendsContainer from "./friendsContainer";
 
 // import ProfileContainer from "./profileContainer";
 
@@ -25,7 +26,7 @@ const walletName = "Wallet";
 const paymentsName = "Payments";
 const profileName = "Profile";
 const transactionsName = "Transactions";
-const peopleName = "Friends";
+const peopleName = "Friends Container";
 
 const Tab = createBottomTabNavigator();
 
@@ -94,9 +95,8 @@ const MainContainer = ({ session }: { session: Session }) => {
         </Tab.Screen>
         <Tab.Screen
           name={peopleName}
-          component={FriendsScreen}
           options={{
-            headerShown: true,
+            headerShown: false,
             tabBarIcon: ({ size, color }) => (
               <FontAwesomeIcon
                 icon={faPeopleArrows}
@@ -113,7 +113,11 @@ const MainContainer = ({ session }: { session: Session }) => {
               }).start();
             },
           })}
-        />
+        >
+          {(props) => (
+            <FriendsContainer key={session.user.id} session={session} />
+          )}
+        </Tab.Screen>
         <Tab.Screen
           name={profileName}
           options={{
