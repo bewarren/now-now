@@ -92,16 +92,35 @@ const FriendRequest = ({ session }: { session: Session }) => {
     }
   };
 
-  const addFriendHandler = async (addresseeId: number) => {
-    const { error } = await supabase.from("friendships").insert({
-      created_at: new Date(),
-      requester_id: session.user.id,
-      addressee_id: addresseeId,
-      requester_name: "",
-      addressee_name: "",
-    });
+  const addFriendHandler = async (
+    addresseeId: number,
+    addresseeName: string
+  ) => {
+    const { data, error: errorSelect } = await supabase
+      .from("friendships")
+      .select()
+      .or(
+        `requester_id.eq.${session.user.id},and(addressee_id.eq.${addresseeId})`
+      );
 
-    console.log(error);
+    // if friend request
+    if (data && !errorSelect) {
+      if (data.length === 0) {
+        const { data: userData, error: errorSelect } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", session.user.id)
+          .single();
+
+        const { error } = await supabase.from("friendships").insert({
+          created_at: new Date(),
+          requester_id: session.user.id,
+          addressee_id: addresseeId,
+          requester_name: userData?.full_name,
+          addressee_name: addresseeName,
+        });
+      }
+    }
   };
 
   return (
@@ -146,7 +165,7 @@ const FriendRequest = ({ session }: { session: Session }) => {
                 <Item
                   name={item?.full_name}
                   addFriend={() => {
-                    addFriendHandler(item.id);
+                    addFriendHandler(item.id, item.full_name);
                   }}
                 />
               );

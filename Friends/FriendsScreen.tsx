@@ -16,6 +16,10 @@ const FriendsScreen = ({ navigation }: FriendsProps) => {
     navigation.navigate("Find Friends");
   };
 
+  const friendRequests = () => {
+    navigation.navigate("Friend Requests");
+  };
+
   const getFriends = async () => {
     const { data, error } = await supabase.from("friendships").select();
     console.log(data);
@@ -59,7 +63,10 @@ const FriendsScreen = ({ navigation }: FriendsProps) => {
               justifyContent: "space-between",
             }}
           >
-            <Pressable onPress={() => {}} style={{ marginHorizontal: 15 }}>
+            <Pressable
+              onPress={friendRequests}
+              style={{ marginHorizontal: 15 }}
+            >
               <FontAwesomeIcon
                 icon={faBellOutline}
                 size={21}
