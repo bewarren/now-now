@@ -50,9 +50,35 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  requestItem: {
+    elevation: 2,
+    padding: 20,
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  requestPerson: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+  },
+  acceptReject: {
+    margin: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   personSending: {
     fontWeight: "600",
     fontSize: 22,
+  },
+  personRequesting: {
+    fontWeight: "400",
+    fontSize: 18,
+    marginLeft: 6,
+    marginTop: 3,
   },
   description: {
     fontSize: 20,

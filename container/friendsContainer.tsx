@@ -13,11 +13,15 @@ const FriendsContainer = ({ session }: { session: Session }) => {
 
   return (
     <Stack.Navigator initialRouteName={friendsListName}>
-      <Stack.Screen
-        name={friendsListName}
-        component={FriendsScreen}
-        options={{ headerShown: true }}
-      />
+      <Stack.Screen name={friendsListName} options={{ headerShown: true }}>
+        {(props) => (
+          <FriendsScreen
+            navigation={props.navigation}
+            key={session?.user.id}
+            session={session}
+          />
+        )}
+      </Stack.Screen>
       <Stack.Screen name={findFriendsName} options={{ headerShown: true }}>
         {(props) => <FriendRequest key={session?.user.id} session={session} />}
       </Stack.Screen>

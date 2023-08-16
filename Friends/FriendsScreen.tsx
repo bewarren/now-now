@@ -6,12 +6,14 @@ import { faBell as faBellOutline } from "@fortawesome/free-regular-svg-icons";
 import { useEffect, useLayoutEffect } from "react";
 import styles from "../styles";
 import { supabase } from "../lib/supabase";
+import { Session } from "@supabase/supabase-js";
 
 interface FriendsProps {
   navigation: any;
+  session: Session;
 }
 
-const FriendsScreen = ({ navigation }: FriendsProps) => {
+const FriendsScreen = ({ navigation, session }: FriendsProps) => {
   const findFriends = () => {
     navigation.navigate("Find Friends");
   };
@@ -21,8 +23,14 @@ const FriendsScreen = ({ navigation }: FriendsProps) => {
   };
 
   const getFriends = async () => {
-    const { data, error } = await supabase.from("friendships").select();
-    console.log(data);
+    const { data, error } = await supabase
+      .from("friendships")
+      .select()
+      .or(
+        `requester_id.eq.${session.user.id},and(addressee_id.eq.${session.user.id})`
+      )
+      .eq("accepted", true)
+      .eq("rejected", false);
   };
 
   useEffect(() => {

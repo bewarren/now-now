@@ -43,8 +43,7 @@ const TransactionsScreen = ({ session }: { session: Session }) => {
       let { data, error, status } = await supabase
         .from("transactions")
         .select(`id, description, from_id , to_id, amount, from_name, to_name`)
-        .eq("from_id", session.user.id)
-        .eq("to_id", session.user.id)
+        .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
         .limit(10);
 
       if (error && status !== 406) {
