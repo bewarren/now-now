@@ -58,7 +58,13 @@ const Item = ({ name, addFriend }: ItemProps) => {
   );
 };
 
-const FriendRequest = ({ session }: { session: Session }) => {
+const FriendRequest = ({
+  session,
+  navigation,
+}: {
+  session: Session;
+  navigation: any;
+}) => {
   // search list of people with a name
   // limit and scroll on list for more
 
@@ -99,18 +105,21 @@ const FriendRequest = ({ session }: { session: Session }) => {
     const { data, error: errorSelect } = await supabase
       .from("friendships")
       .select()
-      .or(
-        `requester_id.eq.${session.user.id},and(addressee_id.eq.${addresseeId})`
-      );
+      .eq("requester_id", session.user.id)
+      .eq("addressee_id", addresseeId);
+
+    console.log(errorSelect, data);
 
     // if friend request
     if (data && !errorSelect) {
       if (data.length === 0) {
-        const { data: userData, error: errorSelect } = await supabase
+        const { data: userData, error: errorUser } = await supabase
           .from("profiles")
           .select("full_name")
           .eq("id", session.user.id)
           .single();
+
+        console.log(errorUser);
 
         const { error } = await supabase.from("friendships").insert({
           created_at: new Date(),
@@ -119,8 +128,11 @@ const FriendRequest = ({ session }: { session: Session }) => {
           requester_name: userData?.full_name,
           addressee_name: addresseeName,
         });
+
+        console.log(error);
       }
     }
+    navigation.navigate("Friends");
   };
 
   return (

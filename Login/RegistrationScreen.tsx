@@ -10,6 +10,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 import styles from "../styles";
 import { formValidationRegister, signUpWithEmail } from "./loginFunctions";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEnvelope, faUnlock } from "@fortawesome/free-solid-svg-icons";
 
 const RegistrationScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
@@ -36,6 +38,7 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
 
     if (formValidationRegister(email, password, confirmPassword)) {
       signUpWithEmail(email, password);
+      loadingHandler();
     } else {
       loadingHandler();
     }
@@ -48,7 +51,7 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
   if (loading) {
     return (
       <View style={[styles.container, styles.horizontal]}>
-        <ActivityIndicator size="large" color="#FFA5D6" />
+        <ActivityIndicator size="large" color="#00cc1f" />
       </View>
     );
   }
@@ -64,53 +67,71 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
         }}
         keyboardShouldPersistTaps="always"
       >
-        <TextInput
-          style={emailFocus ? styles.inputFocus : styles.input}
-          placeholder="Email"
-          placeholderTextColor="#aaaaaa"
-          onChangeText={(text) => setEmail(text)}
-          onFocus={() => {
-            setEmailFocus(true);
-          }}
-          onBlur={() => {
-            setEmailFocus(false);
-          }}
-          value={email}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={passwordFocus ? styles.inputFocus : styles.input}
-          placeholderTextColor="#aaaaaa"
-          secureTextEntry
-          placeholder="Password"
-          onChangeText={(text) => setPassword(text)}
-          onFocus={() => {
-            setPasswordFocus(true);
-          }}
-          onBlur={() => {
-            setPasswordFocus(false);
-          }}
-          value={password}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={confirmPasswordFocus ? styles.inputFocus : styles.input}
-          placeholderTextColor="#aaaaaa"
-          secureTextEntry
-          placeholder="Confirm Password"
-          onChangeText={(text) => setConfirmPassword(text)}
-          onFocus={() => {
-            setConfirmPasswordFocus(true);
-          }}
-          onBlur={() => {
-            setConfirmPasswordFocus(false);
-          }}
-          value={confirmPassword}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
+        <View style={emailFocus ? styles.inputFocus : styles.input}>
+          <FontAwesomeIcon
+            icon={faEnvelope}
+            color={emailFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
+          <TextInput
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={emailFocus ? "#8dfc9e" : "#aaaaaa"}
+            placeholder="Email"
+            onChangeText={(text) => setEmail(text)}
+            onFocus={() => {
+              setEmailFocus(true);
+            }}
+            onBlur={() => {
+              setEmailFocus(false);
+            }}
+            value={email}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
+        <View style={passwordFocus ? styles.inputFocus : styles.input}>
+          <FontAwesomeIcon
+            icon={faUnlock}
+            color={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
+          <TextInput
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
+            secureTextEntry
+            placeholder="Password"
+            onChangeText={(text) => setPassword(text)}
+            onFocus={() => {
+              setPasswordFocus(true);
+            }}
+            onBlur={() => {
+              setPasswordFocus(false);
+            }}
+            value={password}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
+        <View style={confirmPasswordFocus ? styles.inputFocus : styles.input}>
+          <FontAwesomeIcon
+            icon={faUnlock}
+            color={confirmPasswordFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
+          <TextInput
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={confirmPasswordFocus ? "#8dfc9e" : "#aaaaaa"}
+            secureTextEntry
+            placeholder="Confirm Password"
+            onChangeText={(text) => setConfirmPassword(text)}
+            onFocus={() => {
+              setConfirmPasswordFocus(true);
+            }}
+            onBlur={() => {
+              setConfirmPasswordFocus(false);
+            }}
+            value={confirmPassword}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
 
         <TouchableOpacity
           style={styles.button}

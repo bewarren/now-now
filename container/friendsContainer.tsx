@@ -23,7 +23,13 @@ const FriendsContainer = ({ session }: { session: Session }) => {
         )}
       </Stack.Screen>
       <Stack.Screen name={findFriendsName} options={{ headerShown: true }}>
-        {(props) => <FriendRequest key={session?.user.id} session={session} />}
+        {(props) => (
+          <FriendRequest
+            key={session?.user.id}
+            session={session}
+            navigation={props.navigation}
+          />
+        )}
       </Stack.Screen>
       <Stack.Screen name={requestFriendsName} options={{ headerShown: true }}>
         {(props) => (
