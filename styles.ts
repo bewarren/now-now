@@ -27,6 +27,12 @@ const styles = StyleSheet.create({
 
     width: "40%",
   },
+  sendWrapperCustom: {
+    borderRadius: 10,
+    padding: 6,
+    marginTop: 10,
+    width: "45%",
+  },
   listContainer: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,

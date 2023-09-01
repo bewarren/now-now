@@ -1,12 +1,92 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { Pressable, View } from "react-native";
+import { FlatList, Pressable, SafeAreaView, Text, View } from "react-native";
 
-import { faPersonCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faArrowRotateLeft,
+  faCheck,
+  faPersonCirclePlus,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import { faBell as faBellOutline } from "@fortawesome/free-regular-svg-icons";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import styles from "../styles";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
+
+type ItemProps = {
+  name: string | null;
+  send: () => void;
+  request: () => void;
+};
+
+const Item = ({ name, send, request }: ItemProps) => {
+  return (
+    <View style={styles.requestItem}>
+      <View style={styles.requestPerson}>
+        <Text style={styles.personSending}>{name}</Text>
+      </View>
+      <View style={styles.acceptReject}>
+        <Pressable
+          onPress={send}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+            },
+            styles.sendWrapperCustom,
+          ]}
+        >
+          {({ pressed }) => {
+            return (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row-reverse",
+                  justifyContent: "space-around",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faArrowRight}
+                  size={22}
+                  style={{ marginTop: 4.5 }}
+                />
+                <Text style={styles.sendButton}>Send</Text>
+              </View>
+            );
+          }}
+        </Pressable>
+        <Pressable
+          onPress={request}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+            },
+            styles.sendWrapperCustom,
+          ]}
+        >
+          {({ pressed }) => {
+            return (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row-reverse",
+                  justifyContent: "space-around",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faArrowRotateLeft}
+                  size={22}
+                  style={{ marginTop: 4.5 }}
+                />
+                <Text style={styles.sendButton}>Request</Text>
+              </View>
+            );
+          }}
+        </Pressable>
+      </View>
+    </View>
+  );
+};
 
 interface FriendsProps {
   navigation: any;
@@ -14,6 +94,7 @@ interface FriendsProps {
 }
 
 const FriendsScreen = ({ navigation, session }: FriendsProps) => {
+  const [friends, setFriends] = useState<any>([]);
   const findFriends = () => {
     navigation.navigate("Find Friends");
   };
@@ -31,11 +112,17 @@ const FriendsScreen = ({ navigation, session }: FriendsProps) => {
       )
       .eq("accepted", true)
       .eq("rejected", false);
+
+    if (!error) {
+      setFriends(data);
+    }
   };
 
   useEffect(() => {
-    getFriends();
-  }, []);
+    if (session) {
+      getFriends();
+    }
+  }, [session]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -88,7 +175,30 @@ const FriendsScreen = ({ navigation, session }: FriendsProps) => {
     });
   }, [navigation]);
 
-  return <View style={styles.container}></View>;
+  return (
+    <SafeAreaView style={styles.listContainer}>
+      {friends.length > 0 && (
+        <FlatList
+          key={1}
+          data={friends}
+          renderItem={({ item }) => {
+            const friendName =
+              item.addressee_id === session.user.id
+                ? item.requester_name
+                : item.addressee_name;
+            return (
+              <Item
+                name={item?.requester_name}
+                send={() => {}}
+                request={() => {}}
+              />
+            );
+          }}
+          keyExtractor={(item) => item.id}
+        />
+      )}
+    </SafeAreaView>
+  );
 };
 
 export default FriendsScreen;
