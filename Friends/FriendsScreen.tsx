@@ -118,6 +118,8 @@ const FriendsScreen = ({ navigation, session }: FriendsProps) => {
     }
   };
 
+  // need to send back a prop that triggers this
+
   useEffect(() => {
     if (session) {
       getFriends();

@@ -10,13 +10,27 @@ export async function signInWithEmail(email: string, password: string) {
   if (error) Alert.alert(error.message);
 }
 
-export async function signUpWithEmail(email: string, password: string) {
-  const { error } = await supabase.auth.signUp({
+export async function signUpWithEmail(
+  email: string,
+  password: string,
+  fullName: string
+) {
+  const { data, error } = await supabase.auth.signUp({
     email: email,
     password: password,
+    options: {
+      data: {
+        full_name: fullName,
+      },
+    },
   });
 
-  if (error) Alert.alert(error.message);
+  if (error) {
+    Alert.alert(error.message);
+    return false;
+  } else {
+    return true;
+  }
 }
 
 export const formValidationLogin = (email: string, password: string) => {

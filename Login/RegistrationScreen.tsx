@@ -11,11 +11,19 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import styles from "../styles";
 import { formValidationRegister, signUpWithEmail } from "./loginFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEnvelope, faUnlock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faICursor,
+  faPen,
+  faUnlock,
+} from "@fortawesome/free-solid-svg-icons";
 
 const RegistrationScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
   const [emailFocus, setEmailFocus] = useState(false);
+
+  const [fullName, setFullName] = useState("");
+  const [fullNameFocus, setFullNameFocus] = useState(false);
 
   const [password, setPassword] = useState("");
   const [passwordFocus, setPasswordFocus] = useState(false);
@@ -29,16 +37,19 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
     setLoading(false);
   };
 
-  const navigationHandler = () => {
-    navigation.navigate("Email Verification", { email: email });
-  };
-
-  const onRegisterPress = () => {
+  const onRegisterPress = async () => {
     setLoading(true);
 
     if (formValidationRegister(email, password, confirmPassword)) {
-      signUpWithEmail(email, password);
+      const signUpSuccess: boolean = await signUpWithEmail(
+        email,
+        password,
+        fullName
+      );
       loadingHandler();
+      if (signUpSuccess) {
+        navigation.navigate("Verify Email Screen");
+      }
     } else {
       loadingHandler();
     }
@@ -84,6 +95,27 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
               setEmailFocus(false);
             }}
             value={email}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
+        <View style={fullNameFocus ? styles.inputFocus : styles.input}>
+          <FontAwesomeIcon
+            icon={faPen}
+            color={fullNameFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
+          <TextInput
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={fullNameFocus ? "#8dfc9e" : "#aaaaaa"}
+            placeholder="Full Name"
+            onChangeText={(text) => setFullName(text)}
+            onFocus={() => {
+              setFullNameFocus(true);
+            }}
+            onBlur={() => {
+              setFullNameFocus(false);
+            }}
+            value={fullName}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />

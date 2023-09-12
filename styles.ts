@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   },
   requestItem: {
     elevation: 2,
+
     padding: 20,
     borderBottomColor: "black",
     borderBottomWidth: 1,
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 18,
     marginLeft: 6,
-    marginTop: 3,
+    paddingTop: 20,
   },
   description: {
     fontSize: 20,

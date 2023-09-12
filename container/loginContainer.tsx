@@ -3,12 +3,14 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../Login/LoginScreen";
 import RegistrationScreen from "../Login/RegistrationScreen";
+import EmailVerificationScreen from "../Login/EmailVerificationScreen";
 
 const LoginContainer = () => {
   const Stack = createNativeStackNavigator();
 
   const loginName = "Login Screen";
   const registrationName = "Registration Screen";
+  const verifyEmailName = "Verify Email Screen";
 
   return (
     <NavigationContainer>
@@ -28,6 +30,13 @@ const LoginContainer = () => {
         <Stack.Screen
           name={registrationName}
           component={RegistrationScreen}
+          options={{
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name={verifyEmailName}
+          component={EmailVerificationScreen}
           options={{
             headerLeft: () => null,
           }}

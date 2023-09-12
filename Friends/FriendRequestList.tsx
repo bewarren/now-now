@@ -16,10 +16,10 @@ type ItemProps = {
 const Item = ({ name, acceptFriend, rejectFriend }: ItemProps) => {
   return (
     <View style={styles.requestItem}>
-      <View style={styles.requestPerson}>
-        <Text style={styles.personSending}>{name}</Text>
+      <Text style={styles.requestPerson}>
+        <Text style={styles.personSending}>{`${name} \n`}</Text>
         <Text style={styles.personRequesting}>requested to be your friend</Text>
-      </View>
+      </Text>
       <View style={styles.acceptReject}>
         <Pressable
           onPress={acceptFriend}
@@ -105,7 +105,6 @@ const FriendRequestList = ({ session }: { session: Session }) => {
       .eq("id", id)
       .select();
 
-    console.log(data, status, id);
     if (!error) {
       getFriendRequests();
     }
@@ -128,7 +127,6 @@ const FriendRequestList = ({ session }: { session: Session }) => {
     }
   }, [session]);
 
-  console.log(friendRequests);
   return (
     <SafeAreaView style={styles.listContainer}>
       {friendRequests.length > 0 && (

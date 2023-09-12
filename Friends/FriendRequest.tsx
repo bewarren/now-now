@@ -83,6 +83,7 @@ const FriendRequest = ({
       const { data, error, status } = await supabase
         .from("profiles")
         .select()
+        .neq("id", session?.user.id)
         .ilike("full_name", `%${name}%`);
       if (error && status !== 406) {
         throw error;
