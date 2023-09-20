@@ -99,9 +99,10 @@ const Item = ({ name, send, request }: ItemProps) => {
 interface FriendsProps {
   navigation: any;
   session: Session;
+  params: any;
 }
 
-const FriendsScreen = ({ navigation, session }: FriendsProps) => {
+const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
   const [friends, setFriends] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const findFriends = () => {
@@ -150,9 +151,16 @@ const FriendsScreen = ({ navigation, session }: FriendsProps) => {
 
   useEffect(() => {
     if (session) {
-      getFriends();
+      if (!params) {
+        getFriends();
+      } else {
+        const { reload } = params;
+        if (reload) {
+          getFriends();
+        }
+      }
     }
-  }, [session]);
+  }, [session, params]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

@@ -19,6 +19,7 @@ const FriendsContainer = ({ session }: { session: Session }) => {
             navigation={props.navigation}
             key={session?.user.id}
             session={session}
+            params={props.route.params}
           />
         )}
       </Stack.Screen>
@@ -33,7 +34,11 @@ const FriendsContainer = ({ session }: { session: Session }) => {
       </Stack.Screen>
       <Stack.Screen name={requestFriendsName} options={{ headerShown: true }}>
         {(props) => (
-          <FriendRequestList key={session?.user.id} session={session} />
+          <FriendRequestList
+            key={session?.user.id}
+            session={session}
+            navigation={props.navigation}
+          />
         )}
       </Stack.Screen>
     </Stack.Navigator>

@@ -122,10 +122,7 @@ const FriendRequest = ({
     }
   };
 
-  const addFriendHandler = async (
-    addresseeId: number,
-    addresseeName: string
-  ) => {
+  const addFriendHandler = async (addresseeId: number) => {
     const { data, error: errorSelect } = await supabase
       .from("friendships")
       .select()
@@ -142,7 +139,7 @@ const FriendRequest = ({
         });
       }
     }
-    navigation.navigate("Friends");
+    navigation.navigate("Friends", { reload: true });
   };
 
   return (
@@ -187,7 +184,7 @@ const FriendRequest = ({
                 <Item
                   name={item?.full_name}
                   addFriend={() => {
-                    addFriendHandler(item.id, item.full_name);
+                    addFriendHandler(item.id);
                   }}
                 />
               );

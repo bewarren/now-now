@@ -89,7 +89,13 @@ const Item = ({ name, acceptFriend, rejectFriend }: ItemProps) => {
   );
 };
 
-const FriendRequestList = ({ session }: { session: Session }) => {
+const FriendRequestList = ({
+  session,
+  navigation,
+}: {
+  session: Session;
+  navigation: any;
+}) => {
   const [friendRequests, setFriendRequests] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -125,6 +131,7 @@ const FriendRequestList = ({ session }: { session: Session }) => {
 
     if (!error) {
       getFriendRequests();
+      navigation.navigate("Friends", { reload: true });
     }
   };
 
@@ -136,6 +143,7 @@ const FriendRequestList = ({ session }: { session: Session }) => {
 
     if (!error) {
       getFriendRequests();
+      navigation.navigate("Friends", { reload: false });
     }
   };
 
