@@ -93,8 +93,8 @@ export default function Account({ session }: { session: Session }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
     padding: 12,
+    backgroundColor: "white",
   },
   verticallySpaced: {
     paddingTop: 4,

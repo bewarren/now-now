@@ -8,11 +8,15 @@ import {
   faArrowRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
-const SendRequest = () => {
+const SendRequest = ({
+  sendRequestHandler,
+}: {
+  sendRequestHandler: () => void;
+}) => {
   return (
     <View style={styles.sendRequestRow}>
       <Pressable
-        onPress={() => {}}
+        onPress={sendRequestHandler}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? "#61fa78" : "#8dfc9e",

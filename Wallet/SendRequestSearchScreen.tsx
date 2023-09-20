@@ -14,7 +14,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import styles from "../styles";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { err } from "react-native-svg/lib/typescript/xml";
 import { Session } from "@supabase/supabase-js";
 
 type ItemProps = {
@@ -58,7 +57,7 @@ const Item = ({ name, addFriend }: ItemProps) => {
   );
 };
 
-const FriendRequest = ({
+const SendRequestSearchScreen = ({
   session,
   navigation,
 }: {
@@ -109,7 +108,6 @@ const FriendRequest = ({
         setPeople(data);
         setLoading(false);
       } else {
-        // why does this work?
         setPeople(
           data?.filter((d) => {
             const exists =
@@ -208,4 +206,4 @@ const FriendRequest = ({
   );
 };
 
-export default FriendRequest;
+export default SendRequestSearchScreen;

@@ -3,11 +3,14 @@ import styles from "../styles";
 import Balance from "./Balance";
 import SendRequest from "./SendRequest";
 
-const WalletScreen = () => {
+const WalletScreen = ({ navigation }: { navigation: any }) => {
+  const sendRequestHandler = () => {
+    navigation.navigate("Send Request Screen");
+  };
   return (
     <View style={styles.wallet}>
       <Balance />
-      <SendRequest />
+      <SendRequest sendRequestHandler={sendRequestHandler} />
     </View>
   );
 };

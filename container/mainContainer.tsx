@@ -19,6 +19,7 @@ import WalletScreen from "../Wallet/WalletScreen";
 import TransactionsScreen from "../Transactions/TransactionsScreen";
 import FriendsScreen from "../Friends/FriendsScreen";
 import FriendsContainer from "./friendsContainer";
+import WalletContainer from "./walletContainer";
 
 // import ProfileContainer from "./profileContainer";
 
@@ -66,7 +67,9 @@ const MainContainer = ({ session }: { session: Session }) => {
             },
           })}
         >
-          {(props) => <WalletScreen />}
+          {(props) => (
+            <WalletContainer key={session.user.id} session={session} />
+          )}
         </Tab.Screen>
         <Tab.Screen
           name={paymentsName}
@@ -97,6 +100,7 @@ const MainContainer = ({ session }: { session: Session }) => {
           name={peopleName}
           options={{
             headerShown: false,
+            title: "Friends",
             tabBarIcon: ({ size, color }) => (
               <FontAwesomeIcon
                 icon={faPeopleArrows}
