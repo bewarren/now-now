@@ -89,8 +89,31 @@ const FriendRequest = ({
         throw error;
       }
 
-      if (data) {
+      const { data: friendshipData, error: errorSelect } = await supabase
+        .from("friendships")
+        .select()
+        .in("requester_id", data ? data.map((d) => d.id) : [])
+        .eq("addressee_id", session?.user.id)
+        .single();
+
+      const { data: friendshipDataTwo, error: errorSelectTwo } = await supabase
+        .from("friendships")
+        .select()
+        .in("addressee_id", data ? data.map((d) => d.id) : [])
+        .eq("requester_id", session?.user.id)
+        .single();
+
+      if (!friendshipData && !friendshipDataTwo && data) {
         setPeople(data);
+      } else {
+        setPeople(
+          data?.filter((d) => {
+            const exists =
+              d.id === friendshipData?.addressee_id ||
+              d.id === friendshipDataTwo?.requester_id;
+            return exists;
+          })
+        );
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -109,28 +132,14 @@ const FriendRequest = ({
       .eq("requester_id", session.user.id)
       .eq("addressee_id", addresseeId);
 
-    console.log(errorSelect, data);
-
     // if friend request
     if (data && !errorSelect) {
       if (data.length === 0) {
-        const { data: userData, error: errorUser } = await supabase
-          .from("profiles")
-          .select("full_name")
-          .eq("id", session.user.id)
-          .single();
-
-        console.log(errorUser);
-
         const { error } = await supabase.from("friendships").insert({
           created_at: new Date(),
           requester_id: session.user.id,
           addressee_id: addresseeId,
-          requester_name: userData?.full_name,
-          addressee_name: addresseeName,
         });
-
-        console.log(error);
       }
     }
     navigation.navigate("Friends");

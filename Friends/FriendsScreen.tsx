@@ -1,5 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { FlatList, Pressable, SafeAreaView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  SafeAreaView,
+  Text,
+  View,
+} from "react-native";
 
 import {
   faArrowRight,
@@ -13,6 +20,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import styles from "../styles";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
+import { dom } from "@fortawesome/fontawesome-svg-core";
 
 type ItemProps = {
   name: string | null;
@@ -95,6 +103,7 @@ interface FriendsProps {
 
 const FriendsScreen = ({ navigation, session }: FriendsProps) => {
   const [friends, setFriends] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const findFriends = () => {
     navigation.navigate("Find Friends");
   };
@@ -104,21 +113,40 @@ const FriendsScreen = ({ navigation, session }: FriendsProps) => {
   };
 
   const getFriends = async () => {
+    setLoading(true);
+    const formattedFriendData: any[] = [];
     const { data, error } = await supabase
       .from("friendships")
-      .select()
+      .select(
+        `*, requester: requester_id (full_name), addressee: addressee_id (full_name)`
+      )
       .or(
         `requester_id.eq.${session.user.id},and(addressee_id.eq.${session.user.id})`
       )
       .eq("accepted", true)
       .eq("rejected", false);
 
-    if (!error) {
-      setFriends(data);
+    // query foreign table up here
+    if (data && !error) {
+      setLoading(false);
+
+      setFriends(
+        data.map((d) => {
+          return {
+            ...d,
+            requester_name: d.requester.full_name,
+            addressee_name: d.addressee.full_name,
+          };
+        })
+      );
+    } else {
+      setLoading(false);
     }
   };
 
   // need to send back a prop that triggers this
+
+  // need a loading screen
 
   useEffect(() => {
     if (session) {
@@ -176,6 +204,14 @@ const FriendsScreen = ({ navigation, session }: FriendsProps) => {
       },
     });
   }, [navigation]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size="large" color="#00cc1f" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.listContainer}>

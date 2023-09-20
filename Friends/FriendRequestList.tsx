@@ -1,6 +1,13 @@
 import { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, View, Text, Pressable } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { supabase } from "../lib/supabase";
 import styles from "../styles";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -84,17 +91,28 @@ const Item = ({ name, acceptFriend, rejectFriend }: ItemProps) => {
 
 const FriendRequestList = ({ session }: { session: Session }) => {
   const [friendRequests, setFriendRequests] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const getFriendRequests = async () => {
+    setLoading(true);
+    const friendRequestsData: any[] = [];
     const { data, error, status } = await supabase
       .from("friendships")
-      .select()
-
+      .select(`*, requester: requester_id (full_name)`)
       .eq("addressee_id", session.user.id)
       .eq("accepted", false)
       .eq("rejected", false);
 
-    if (!error) {
-      setFriendRequests(data);
+    if (data && !error) {
+      setFriendRequests(
+        data?.map((d) => {
+          return { ...d, requester_name: d.requester.full_name };
+        })
+      );
+
+      setLoading(false);
+    } else {
+      setLoading(false);
     }
   };
 
@@ -126,6 +144,14 @@ const FriendRequestList = ({ session }: { session: Session }) => {
       getFriendRequests();
     }
   }, [session]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size="large" color="#00cc1f" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.listContainer}>
