@@ -13,20 +13,24 @@ import { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import styles from "../styles";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faPlus,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 import { Session } from "@supabase/supabase-js";
 
 type ItemProps = {
   name: string | null;
-  addFriend: () => void;
+  select: () => void;
 };
 
-const Item = ({ name, addFriend }: ItemProps) => {
+const Item = ({ name, select }: ItemProps) => {
   return (
     <View style={styles.friendItem}>
       <Text style={styles.personSending}>{name}</Text>
       <Pressable
-        onPress={addFriend}
+        onPress={select}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
@@ -39,16 +43,11 @@ const Item = ({ name, addFriend }: ItemProps) => {
             <View
               style={{
                 flex: 1,
-                flexDirection: "row",
+                flexDirection: "row-reverse",
                 justifyContent: "space-around",
               }}
             >
-              <FontAwesomeIcon
-                icon={faPlus}
-                size={22}
-                style={{ marginTop: 4.5 }}
-              />
-              <Text style={styles.sendButton}>Add</Text>
+              <Text style={styles.sendButton}>Select</Text>
             </View>
           );
         }}
@@ -57,7 +56,7 @@ const Item = ({ name, addFriend }: ItemProps) => {
   );
 };
 
-const SendRequestSearchScreen = ({
+const SendScreen = ({
   session,
   navigation,
 }: {
@@ -71,9 +70,10 @@ const SendRequestSearchScreen = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [searchNameFocus, setSearchNameFocus] = useState<boolean>(false);
   const [people, setPeople] = useState<any>([]);
+  const [selectedPerson, setSelectedPerson] = useState<any>(null);
 
   useEffect(() => {
-    if (searchName !== "") {
+    if (searchNameFocus && searchName !== "") {
       getPeople(searchName);
     }
   }, [searchName]);
@@ -90,32 +90,10 @@ const SendRequestSearchScreen = ({
         throw error;
       }
 
-      const { data: friendshipData, error: errorSelect } = await supabase
-        .from("friendships")
-        .select()
-        .in("requester_id", data ? data.map((d) => d.id) : [])
-        .eq("addressee_id", session?.user.id)
-        .single();
-
-      const { data: friendshipDataTwo, error: errorSelectTwo } = await supabase
-        .from("friendships")
-        .select()
-        .in("addressee_id", data ? data.map((d) => d.id) : [])
-        .eq("requester_id", session?.user.id)
-        .single();
-
-      if (!friendshipData && !friendshipDataTwo && data) {
+      if (data) {
         setPeople(data);
         setLoading(false);
       } else {
-        setPeople(
-          data?.filter((d) => {
-            const exists =
-              d.id === friendshipData?.addressee_id ||
-              d.id === friendshipDataTwo?.requester_id;
-            return exists;
-          })
-        );
         setLoading(false);
       }
     } catch (error) {
@@ -125,24 +103,11 @@ const SendRequestSearchScreen = ({
     }
   };
 
-  const addFriendHandler = async (addresseeId: number) => {
-    const { data, error: errorSelect } = await supabase
-      .from("friendships")
-      .select()
-      .eq("requester_id", session.user.id)
-      .eq("addressee_id", addresseeId);
-
-    // if friend request
-    if (data && !errorSelect) {
-      if (data.length === 0) {
-        const { error } = await supabase.from("friendships").insert({
-          created_at: new Date(),
-          requester_id: session.user.id,
-          addressee_id: addresseeId,
-        });
-      }
-    }
-    navigation.navigate("Friends", { reload: true });
+  const selectHandler = (item: any) => {
+    console.log("here");
+    console.log(item);
+    setSelectedPerson(item);
+    setSearchName(item.full_name);
   };
 
   return (
@@ -160,7 +125,7 @@ const SendRequestSearchScreen = ({
           color={searchNameFocus ? "#8dfc9e" : "#aaaaaa"}
         />
         <TextInput
-          placeholder="Search"
+          placeholder="To"
           style={{ paddingLeft: 10, height: "100%", width: "100%" }}
           placeholderTextColor={searchNameFocus ? "#8dfc9e" : "#aaaaaa"}
           onChangeText={(text) => setSearchName(text)}
@@ -186,8 +151,8 @@ const SendRequestSearchScreen = ({
               return (
                 <Item
                   name={item?.full_name}
-                  addFriend={() => {
-                    addFriendHandler(item.id);
+                  select={() => {
+                    selectHandler(item);
                   }}
                 />
               );
@@ -206,4 +171,4 @@ const SendRequestSearchScreen = ({
   );
 };
 
-export default SendRequestSearchScreen;
+export default SendScreen;

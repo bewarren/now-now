@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import WalletScreen from "../Wallet/WalletScreen";
-import SendRequestSearchScreen from "../Wallet/SendRequestSearchScreen";
+import SendScreen from "../Wallet/SendScreen";
 import { Session } from "@supabase/supabase-js";
 
 const WalletContainer = ({ session }: { session: Session }) => {
@@ -38,7 +38,7 @@ const WalletContainer = ({ session }: { session: Session }) => {
         }}
       >
         {(props) => (
-          <SendRequestSearchScreen
+          <SendScreen
             key={session.user.id}
             session={session}
             navigation={props.navigation}
