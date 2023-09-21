@@ -233,11 +233,7 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
                 ? item.requester_name
                 : item.addressee_name;
             return (
-              <Item
-                name={item?.requester_name}
-                send={() => {}}
-                request={() => {}}
-              />
+              <Item name={friendName} send={() => {}} request={() => {}} />
             );
           }}
           keyExtractor={(item) => item.id}
