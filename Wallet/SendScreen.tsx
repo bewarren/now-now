@@ -15,7 +15,8 @@ import styles from "../styles";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faArrowRight,
-  faPlus,
+  faDollar,
+  faFileText,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { Session } from "@supabase/supabase-js";
@@ -67,8 +68,16 @@ const SendScreen = ({
   // limit and scroll on list for more
 
   const [searchName, setSearchName] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
   const [searchNameFocus, setSearchNameFocus] = useState<boolean>(false);
+
+  const [amount, setAmount] = useState<string>("");
+  const [amountFocus, setAmountFocus] = useState<boolean>(false);
+
+  const [description, setDescription] = useState<string>("");
+  const [descriptionFocus, setDescriptionFocus] = useState<boolean>(false);
+
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [people, setPeople] = useState<any>([]);
   const [selectedPerson, setSelectedPerson] = useState<any>(null);
 
@@ -104,11 +113,30 @@ const SendScreen = ({
   };
 
   const selectHandler = (item: any) => {
-    console.log("here");
     console.log(item);
     setSelectedPerson(item);
     setSearchName(item.full_name);
   };
+
+  const addSpace = (text: string) => text.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const removeNonNumeric = (text: string) => text.replace(/[^0-9$.,]/g, "");
+
+  const handleChange = (text: string) =>
+    setAmount(addSpace(handleDecimalsOnValue(removeNonNumeric(text))));
+
+  function checkValue(text: string) {
+    setAmount(handleDecimalsOnValue(text));
+  }
+
+  function handleDecimalsOnValue(value: string) {
+    const regex = /([0-9]*[\.|\,]{0,1}[0-9]{0,2})/s;
+    const valueMatch = value.match(regex);
+    if (valueMatch) {
+      return valueMatch[0];
+    } else {
+      return "";
+    }
+  }
 
   return (
     <View
@@ -116,6 +144,8 @@ const SendScreen = ({
         flex: 1,
         width: "100%",
         backgroundColor: "white",
+        flexDirection: "column",
+        height: "100%",
       }}
     >
       {/* search list */}
@@ -140,7 +170,77 @@ const SendScreen = ({
           autoCapitalize="none"
         />
       </View>
+      <View style={amountFocus ? styles.inputFocus : styles.input}>
+        <FontAwesomeIcon
+          icon={faDollar}
+          color={amountFocus ? "#8dfc9e" : "#aaaaaa"}
+        />
+
+        <TextInput
+          placeholder="Amount"
+          keyboardType="numeric"
+          style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+          placeholderTextColor={amountFocus ? "#8dfc9e" : "#aaaaaa"}
+          onChangeText={(text) => {
+            handleChange(text);
+          }}
+          onFocus={() => {
+            setAmountFocus(true);
+          }}
+          onBlur={() => {
+            setAmountFocus(false);
+          }}
+          value={amount}
+          underlineColorAndroid="transparent"
+          autoCapitalize="none"
+        />
+      </View>
+      <View style={descriptionFocus ? { ...styles.inputFocus } : styles.input}>
+        <FontAwesomeIcon
+          icon={faFileText}
+          color={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
+        />
+
+        <TextInput
+          placeholder="Description"
+          style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+          placeholderTextColor={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
+          onChangeText={(text) => setDescription(text)}
+          onFocus={() => {
+            setDescriptionFocus(true);
+          }}
+          onBlur={() => {
+            setDescriptionFocus(false);
+          }}
+          value={description}
+          underlineColorAndroid="transparent"
+          autoCapitalize="none"
+        />
+      </View>
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+          },
+          styles.walletSendWrapper,
+        ]}
+      >
+        {({ pressed }) => {
+          return (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row-reverse",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={styles.sendButton}>Send</Text>
+            </View>
+          );
+        }}
+      </Pressable>
       {/* list of people */}
+
       <SafeAreaView style={styles.listContainer}>
         {people.length > 0 && searchName !== "" && (
           <FlatList
@@ -166,6 +266,7 @@ const SendScreen = ({
           </View>
         )}
       </SafeAreaView>
+
       {/* list of friend request button on clicking */}
     </View>
   );

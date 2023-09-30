@@ -1,6 +1,14 @@
 import { StatusBar, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  header: {
+    fontSize: 20,
+    fontWeight: "500",
+    margin: 5,
+    marginLeft: 20,
+    marginTop: 20,
+    width: 80,
+  },
   sendRequestRow: {
     flex: 1,
     flexDirection: "row",
@@ -8,6 +16,13 @@ const styles = StyleSheet.create({
     marginTop: 30,
     margin: 0,
     height: "20%",
+  },
+  sendRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 30,
+    margin: 0,
   },
   sendButton: {
     fontSize: 24,
@@ -32,6 +47,14 @@ const styles = StyleSheet.create({
     padding: 6,
     marginTop: 10,
     width: "45%",
+  },
+  walletSendWrapper: {
+    borderRadius: 10,
+    padding: 6,
+    marginTop: 10,
+    marginLeft: 20,
+    width: "90%",
+    height: "6%",
   },
   listContainer: {
     flex: 1,
