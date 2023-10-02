@@ -138,8 +138,34 @@ const SendScreen = ({
     }
   }
 
+  const validate = (selectedPerson: any, amount: string) => {
+    let selectedPersonError = false;
+    let amountError = false;
+
+    if (!selectedPerson) {
+      console.log(selectedPerson);
+      selectedPersonError = true;
+    }
+
+    if (amount === "" || parseFloat(amount.replace(",", ".")) === 0) {
+      amountError = true;
+    }
+
+    if (selectedPersonError || amountError) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const send = () => {
     // validate input
+    if (validate(selectedPerson, amount)) {
+      console.log("true");
+    } else {
+      console.log("false");
+    }
+
     // add to database
     // navigate back to wallet
   };
@@ -256,6 +282,7 @@ const SendScreen = ({
             },
             styles.walletSendWrapper,
           ]}
+          onPress={send}
         >
           {({ pressed }) => {
             return (

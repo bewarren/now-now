@@ -2,6 +2,7 @@ import { Text, View } from "react-native";
 import styles from "../styles";
 import Balance from "./Balance";
 import SendRequest from "./SendRequest";
+import FloatingTextInput from "../components/FloatingTextInput";
 
 const WalletScreen = ({ navigation }: { navigation: any }) => {
   const sendRequestHandler = () => {

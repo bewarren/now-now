@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
   input: {
     padding: 24,
     borderWidth: 1,
+    margin: 20,
     borderRadius: 4,
     fontFamily: "Avenir-Medium",
     fontSize: 16,
@@ -115,6 +116,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     paddingHorizontal: 8,
     backgroundColor: "white",
+    margin: 20,
   },
   label: {
     fontFamily: "Avenir-Heavy",
