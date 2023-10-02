@@ -14,13 +14,14 @@ const WalletContainer = ({ session }: { session: Session }) => {
     <Stack.Navigator
       initialRouteName={walletName}
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
       }}
     >
       <Stack.Screen
         name={walletName}
         options={{
           headerLeft: () => null,
+          title: "Wallet",
         }}
       >
         {(props) => (
@@ -35,6 +36,7 @@ const WalletContainer = ({ session }: { session: Session }) => {
         name={sendRequestName}
         options={{
           headerLeft: () => null,
+          title: "Send",
         }}
       >
         {(props) => (

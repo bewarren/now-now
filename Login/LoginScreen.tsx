@@ -74,7 +74,12 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
             color={emailFocus ? "#8dfc9e" : "#aaaaaa"}
           />
           <TextInput
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            style={{
+              fontSize: 17,
+              paddingLeft: 10,
+              height: "100%",
+              width: "100%",
+            }}
             placeholderTextColor={emailFocus ? "#8dfc9e" : "#aaaaaa"}
             placeholder="Email"
             onChangeText={(text) => setEmail(text)}
@@ -95,7 +100,12 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
             color={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
           />
           <TextInput
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            style={{
+              fontSize: 17,
+              paddingLeft: 10,
+              height: "100%",
+              width: "100%",
+            }}
             placeholderTextColor={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
             secureTextEntry
             placeholder="Password"

@@ -53,7 +53,7 @@ const MainContainer = ({ session }: { session: Session }) => {
         <Tab.Screen
           name={walletName}
           options={{
-            headerShown: true,
+            headerShown: false,
             tabBarIcon: ({ size, color }) => (
               <FontAwesomeIcon icon={faWallet} size={size} color={color} />
             ),

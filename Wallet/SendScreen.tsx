@@ -138,6 +138,12 @@ const SendScreen = ({
     }
   }
 
+  const send = () => {
+    // validate input
+    // add to database
+    // navigate back to wallet
+  };
+
   return (
     <View
       style={{
@@ -156,7 +162,12 @@ const SendScreen = ({
         />
         <TextInput
           placeholder="To"
-          style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+          style={{
+            paddingLeft: 10,
+            height: "100%",
+            width: "100%",
+            fontSize: 17,
+          }}
           placeholderTextColor={searchNameFocus ? "#8dfc9e" : "#aaaaaa"}
           onChangeText={(text) => setSearchName(text)}
           onFocus={() => {
@@ -184,7 +195,12 @@ const SendScreen = ({
           <TextInput
             placeholder="Amount"
             keyboardType="numeric"
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            style={{
+              fontSize: 17,
+              paddingLeft: 10,
+              height: "100%",
+              width: "100%",
+            }}
             placeholderTextColor={amountFocus ? "#8dfc9e" : "#aaaaaa"}
             onChangeText={(text) => {
               handleChange(text);
@@ -212,7 +228,12 @@ const SendScreen = ({
 
           <TextInput
             placeholder="Description"
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            style={{
+              fontSize: 17,
+              paddingLeft: 10,
+              height: "100%",
+              width: "100%",
+            }}
             placeholderTextColor={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
             onChangeText={(text) => setDescription(text)}
             onFocus={() => {
