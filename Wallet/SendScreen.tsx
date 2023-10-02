@@ -113,9 +113,9 @@ const SendScreen = ({
   };
 
   const selectHandler = (item: any) => {
-    console.log(item);
     setSelectedPerson(item);
     setSearchName(item.full_name);
+    setSearchNameFocus(false);
   };
 
   const addSpace = (text: string) => text.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -163,109 +163,124 @@ const SendScreen = ({
             setSearchNameFocus(true);
           }}
           onBlur={() => {
-            setSearchNameFocus(false);
+            if (people.length === 0 || searchName === "") {
+              setSelectedPerson(null);
+              setSearchNameFocus(false);
+              setSearchName("");
+            }
           }}
           value={searchName}
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
       </View>
-      <View style={amountFocus ? styles.inputFocus : styles.input}>
-        <FontAwesomeIcon
-          icon={faDollar}
-          color={amountFocus ? "#8dfc9e" : "#aaaaaa"}
-        />
+      {!searchNameFocus && (
+        <View style={amountFocus ? styles.inputFocus : styles.input}>
+          <FontAwesomeIcon
+            icon={faDollar}
+            color={amountFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
 
-        <TextInput
-          placeholder="Amount"
-          keyboardType="numeric"
-          style={{ paddingLeft: 10, height: "100%", width: "100%" }}
-          placeholderTextColor={amountFocus ? "#8dfc9e" : "#aaaaaa"}
-          onChangeText={(text) => {
-            handleChange(text);
-          }}
-          onFocus={() => {
-            setAmountFocus(true);
-          }}
-          onBlur={() => {
-            setAmountFocus(false);
-          }}
-          value={amount}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-      </View>
-      <View style={descriptionFocus ? { ...styles.inputFocus } : styles.input}>
-        <FontAwesomeIcon
-          icon={faFileText}
-          color={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
-        />
+          <TextInput
+            placeholder="Amount"
+            keyboardType="numeric"
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={amountFocus ? "#8dfc9e" : "#aaaaaa"}
+            onChangeText={(text) => {
+              handleChange(text);
+            }}
+            onFocus={() => {
+              setAmountFocus(true);
+            }}
+            onBlur={() => {
+              setAmountFocus(false);
+            }}
+            value={amount}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
+      )}
+      {!searchNameFocus && (
+        <View
+          style={descriptionFocus ? { ...styles.inputFocus } : styles.input}
+        >
+          <FontAwesomeIcon
+            icon={faFileText}
+            color={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
+          />
 
-        <TextInput
-          placeholder="Description"
-          style={{ paddingLeft: 10, height: "100%", width: "100%" }}
-          placeholderTextColor={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
-          onChangeText={(text) => setDescription(text)}
-          onFocus={() => {
-            setDescriptionFocus(true);
+          <TextInput
+            placeholder="Description"
+            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
+            placeholderTextColor={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
+            onChangeText={(text) => setDescription(text)}
+            onFocus={() => {
+              setDescriptionFocus(true);
+            }}
+            onBlur={() => {
+              setDescriptionFocus(false);
+            }}
+            value={description}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
+      )}
+      {!searchNameFocus && (
+        <Pressable
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+            },
+            styles.walletSendWrapper,
+          ]}
+        >
+          {({ pressed }) => {
+            return (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row-reverse",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={styles.sendButton}>Send</Text>
+              </View>
+            );
           }}
-          onBlur={() => {
-            setDescriptionFocus(false);
-          }}
-          value={description}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-      </View>
-      <Pressable
-        style={({ pressed }) => [
-          {
-            backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-          },
-          styles.walletSendWrapper,
-        ]}
-      >
-        {({ pressed }) => {
-          return (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row-reverse",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={styles.sendButton}>Send</Text>
-            </View>
-          );
-        }}
-      </Pressable>
+        </Pressable>
+      )}
       {/* list of people */}
 
-      <SafeAreaView style={styles.listContainer}>
-        {people.length > 0 && searchName !== "" && (
-          <FlatList
-            nestedScrollEnabled
-            key={1}
-            data={people}
-            renderItem={({ item }) => {
-              return (
-                <Item
-                  name={item?.full_name}
-                  select={() => {
-                    selectHandler(item);
-                  }}
-                />
-              );
-            }}
-            keyExtractor={(item) => item.id}
-          />
-        )}
-        {loading && (
-          <View style={[styles.horizontal]}>
-            <ActivityIndicator size="large" color="#00cc1f" />
-          </View>
-        )}
-      </SafeAreaView>
+      {searchNameFocus && (
+        <SafeAreaView style={styles.listContainer}>
+          {people.length > 0 && searchName !== "" && (
+            <FlatList
+              nestedScrollEnabled
+              key={1}
+              data={people}
+              renderItem={({ item }) => {
+                return (
+                  <Item
+                    name={item?.full_name}
+                    select={() => {
+                      selectHandler(item);
+                    }}
+                  />
+                );
+              }}
+              keyExtractor={(item) => item.id}
+            />
+          )}
+
+          {loading && (
+            <View style={[styles.horizontal]}>
+              <ActivityIndicator size="large" color="#00cc1f" />
+            </View>
+          )}
+        </SafeAreaView>
+      )}
 
       {/* list of friend request button on clicking */}
     </View>
