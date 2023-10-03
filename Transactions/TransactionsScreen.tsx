@@ -42,9 +42,13 @@ const TransactionsScreen = ({ session }: { session: Session }) => {
 
       let { data, error, status } = await supabase
         .from("transactions")
-        .select(`id, description, from_id , to_id, amount, from_name, to_name`)
+        .select(
+          `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount`
+        )
         .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
         .limit(10);
+
+      console.log(error);
 
       if (error && status !== 406) {
         throw error;
@@ -75,9 +79,10 @@ const TransactionsScreen = ({ session }: { session: Session }) => {
         key={1}
         data={transactions}
         renderItem={({ item }) => {
+          console.log(item);
           const from =
-            item.from_id === session.user.id ? "You" : item.from_name;
-          const to = item.from_id === session.user.id ? "You" : item.to_name;
+            item.from.id === session.user.id ? "You" : item.from.full_name;
+          const to = item.to.id === session.user.id ? "You" : item.to.full_name;
           const amount = item.amount;
 
           return (

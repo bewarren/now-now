@@ -143,7 +143,6 @@ const SendScreen = ({
     let amountError = false;
 
     if (!selectedPerson) {
-      console.log(selectedPerson);
       selectedPersonError = true;
     }
 
@@ -158,10 +157,25 @@ const SendScreen = ({
     }
   };
 
-  const send = () => {
+  const send = async () => {
     // validate input
     if (validate(selectedPerson, amount)) {
-      console.log("true");
+      const { error } = await supabase.from("transactions").insert({
+        created_at: new Date(),
+        updated_at: new Date(),
+        to_id: selectedPerson.id,
+        from_id: session.user.id,
+        description: description,
+        paid: true,
+        rejected: false,
+        amount: parseFloat(amount.replace(",", ".").replace(" ", "")),
+      });
+
+      if (error) {
+        console.log(error);
+      } else {
+        navigation.navigate("Wallet Screen");
+      }
     } else {
       console.log("false");
     }
