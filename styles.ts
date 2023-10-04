@@ -17,6 +17,14 @@ const styles = StyleSheet.create({
     margin: 0,
     height: "20%",
   },
+  payCancelRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 30,
+    margin: 0,
+    height: "100%",
+  },
   sendRow: {
     flex: 1,
     flexDirection: "row",
@@ -30,11 +38,24 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
   },
+  payCancelButton: {
+    fontSize: 24,
+    fontWeight: "600",
+    textAlign: "center",
+    alignContent: "center",
+    alignItems: "center",
+    color: "white",
+  },
   wrapperCustom: {
     borderRadius: 8,
     padding: 6,
     width: "40%",
     height: "7.5%",
+  },
+  payWrapperCustom: {
+    borderRadius: 8,
+    padding: 6,
+    width: "40%",
   },
   friendWrapperCustom: {
     borderRadius: 8,
@@ -60,9 +81,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
     backgroundColor: "white",
+    marginBottom: 90,
   },
   item: {
-    backgroundColor: "#f9c2ff",
+    backgroundColor: "#8dfc9e",
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,

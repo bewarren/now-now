@@ -221,6 +221,13 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
     );
   }
 
+  const sendHandler = () => {
+    navigation.navigate("Send Screen");
+  };
+  const requestHandler = () => {
+    navigation.navigate("Request Screen");
+  };
+
   return (
     <SafeAreaView style={styles.listContainer}>
       {friends.length > 0 && (
@@ -233,7 +240,11 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
                 ? item.requester_name
                 : item.addressee_name;
             return (
-              <Item name={friendName} send={() => {}} request={() => {}} />
+              <Item
+                name={friendName}
+                send={sendHandler}
+                request={requestHandler}
+              />
             );
           }}
           keyExtractor={(item) => item.id}

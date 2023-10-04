@@ -9,14 +9,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const SendRequest = ({
-  sendRequestHandler,
+  sendHandler,
+  requestHandler,
 }: {
-  sendRequestHandler: () => void;
+  sendHandler: () => void;
+  requestHandler: () => void;
 }) => {
   return (
     <View style={styles.sendRequestRow}>
       <Pressable
-        onPress={sendRequestHandler}
+        onPress={sendHandler}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
@@ -44,7 +46,7 @@ const SendRequest = ({
         }}
       </Pressable>
       <Pressable
-        onPress={() => {}}
+        onPress={requestHandler}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? "#61fa78" : "#8dfc9e",

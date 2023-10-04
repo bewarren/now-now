@@ -5,13 +5,16 @@ import SendRequest from "./SendRequest";
 import FloatingTextInput from "../components/FloatingTextInput";
 
 const WalletScreen = ({ navigation }: { navigation: any }) => {
-  const sendRequestHandler = () => {
-    navigation.navigate("Send Request Screen");
+  const sendHandler = () => {
+    navigation.navigate("Send Screen");
+  };
+  const requestHandler = () => {
+    navigation.navigate("Request Screen");
   };
   return (
     <View style={styles.wallet}>
       <Balance />
-      <SendRequest sendRequestHandler={sendRequestHandler} />
+      <SendRequest sendHandler={sendHandler} requestHandler={requestHandler} />
     </View>
   );
 };
