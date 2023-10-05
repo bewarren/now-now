@@ -28,12 +28,12 @@ const Item = ({ description, from, to, amount, paid }: ItemProps) => {
   let payButton = false;
 
   if (paid) {
-    text = `${from} sent  R${amount} to ${to} for: `;
+    text = `${from} sent  R${amount} to ${to} `;
   } else if (!paid && to === "You") {
-    text = `${to} requested R${amount} from ${from} for:`;
+    text = `${to} requested R${amount} from ${from}`;
   } else if (!paid && from === "You") {
     payButton = true;
-    text = `${to} requested R${amount} from ${from} for:`;
+    text = `${to} requested R${amount}`;
   } else {
     text = "";
   }
@@ -48,7 +48,7 @@ const Item = ({ description, from, to, amount, paid }: ItemProps) => {
             onPress={() => {}}
             style={({ pressed }) => [
               {
-                backgroundColor: pressed ? "#8dfc9e" : "#61fa78",
+                backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
               },
               styles.payWrapperCustom,
             ]}
@@ -76,7 +76,7 @@ const Item = ({ description, from, to, amount, paid }: ItemProps) => {
             onPress={() => {}}
             style={({ pressed }) => [
               {
-                backgroundColor: pressed ? "#8dfc9e" : "#61fa78",
+                backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
               },
               styles.payWrapperCustom,
             ]}
@@ -106,13 +106,33 @@ const Item = ({ description, from, to, amount, paid }: ItemProps) => {
   );
 };
 
-const TransactionsScreen = ({ session }: { session: Session }) => {
+const TransactionsScreen = ({
+  session,
+  navigation,
+  params,
+}: {
+  session: Session;
+  navigation: any;
+  params: any;
+}) => {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<any>([]);
 
   useEffect(() => {
-    if (session) getTransactions();
-  }, [session]);
+    if (session) {
+      if (!params) {
+        getTransactions();
+      } else {
+        const { reload } = params;
+        if (reload) {
+          getTransactions();
+        }
+      }
+    }
+  }, [session, params]);
+  // useEffect(() => {
+  //   if (session) getTransactions();
+  // }, [session]);
 
   async function getTransactions() {
     try {
@@ -161,7 +181,11 @@ const TransactionsScreen = ({ session }: { session: Session }) => {
             item.from.id === session.user.id ? "You" : item.from.full_name;
           const to = item.to.id === session.user.id ? "You" : item.to.full_name;
 
-          const amount = item.amount;
+          const amount = item.amount
+            .toLocaleString(undefined, {
+              maximumFractionDigits: 2,
+            })
+            .replace(",", ".");
           const paid = item.paid;
 
           return (

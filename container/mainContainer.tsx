@@ -93,7 +93,12 @@ const MainContainer = ({ session }: { session: Session }) => {
           })}
         >
           {(props) => (
-            <TransactionsScreen key={session.user.id} session={session} />
+            <TransactionsScreen
+              key={session.user.id}
+              session={session}
+              navigation={props.navigation}
+              params={props.route.params}
+            />
           )}
         </Tab.Screen>
         <Tab.Screen

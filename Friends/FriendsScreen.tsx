@@ -32,7 +32,7 @@ const Item = ({ name, send, request }: ItemProps) => {
   return (
     <View style={styles.requestItem}>
       <View style={styles.requestPerson}>
-        <Text style={styles.personSending}>{name}</Text>
+        <Text style={styles.friendName}>{name}</Text>
       </View>
       <View style={styles.acceptReject}>
         <Pressable

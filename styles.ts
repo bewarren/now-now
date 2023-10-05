@@ -84,11 +84,12 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
   item: {
-    backgroundColor: "#8dfc9e",
+    backgroundColor: "white",
+    borderColor: "black",
+    borderBottomWidth: 1,
     padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 16,
+    marginVertical: 1,
+    marginHorizontal: 12,
   },
   friendItem: {
     padding: 20,
@@ -120,6 +121,10 @@ const styles = StyleSheet.create({
   },
   personSending: {
     fontWeight: "600",
+    fontSize: 16,
+  },
+  friendName: {
+    fontWeight: "600",
     fontSize: 22,
   },
   personRequesting: {
@@ -129,7 +134,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   description: {
-    fontSize: 20,
+    fontSize: 16,
+    marginTop: 2,
   },
   container: {
     flex: 1,
