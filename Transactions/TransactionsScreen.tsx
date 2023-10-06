@@ -17,13 +17,25 @@ import { faArrowRight, faMultiply } from "@fortawesome/free-solid-svg-icons";
 
 type ItemProps = {
   description: string;
+  id: number;
   from: string;
   to: string;
   amount: string;
   paid: boolean;
+  pay: () => void;
+  cancel: () => void;
 };
 
-const Item = ({ description, from, to, amount, paid }: ItemProps) => {
+const Item = ({
+  description,
+  id,
+  from,
+  to,
+  amount,
+  paid,
+  pay,
+  cancel,
+}: ItemProps) => {
   let text;
   let payButton = false;
 
@@ -45,7 +57,7 @@ const Item = ({ description, from, to, amount, paid }: ItemProps) => {
       {payButton && (
         <View style={styles.payCancelRow}>
           <Pressable
-            onPress={() => {}}
+            onPress={cancel}
             style={({ pressed }) => [
               {
                 backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
@@ -73,7 +85,7 @@ const Item = ({ description, from, to, amount, paid }: ItemProps) => {
             }}
           </Pressable>
           <Pressable
-            onPress={() => {}}
+            onPress={pay}
             style={({ pressed }) => [
               {
                 backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
@@ -134,6 +146,28 @@ const TransactionsScreen = ({
   //   if (session) getTransactions();
   // }, [session]);
 
+  const pay = async (id: number) => {
+    const { error } = await supabase
+      .from("transactions")
+      .update({ paid: true })
+      .eq("id", id);
+
+    if (!error) {
+      getTransactions();
+    }
+  };
+
+  const cancel = async (id: number) => {
+    const { error } = await supabase
+      .from("transactions")
+      .update({ rejected: true })
+      .eq("id", id);
+
+    if (!error) {
+      getTransactions();
+    }
+  };
+
   async function getTransactions() {
     try {
       setLoading(true);
@@ -145,6 +179,7 @@ const TransactionsScreen = ({
           `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount, paid`
         )
         .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
+        .eq("rejected", false)
         .order("updated_at", { ascending: false })
         .limit(10);
 
@@ -191,10 +226,17 @@ const TransactionsScreen = ({
           return (
             <Item
               description={item.description}
+              id={item.id}
               from={from}
               to={to}
               amount={amount}
               paid={paid}
+              pay={() => {
+                pay(item.id);
+              }}
+              cancel={() => {
+                cancel(item.id);
+              }}
             />
           );
         }}
