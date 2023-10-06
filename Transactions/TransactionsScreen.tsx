@@ -149,7 +149,7 @@ const TransactionsScreen = ({
   const pay = async (id: number) => {
     const { error } = await supabase
       .from("transactions")
-      .update({ paid: true })
+      .update({ paid: true, updated_at: new Date() })
       .eq("id", id);
 
     if (!error) {
@@ -160,7 +160,7 @@ const TransactionsScreen = ({
   const cancel = async (id: number) => {
     const { error } = await supabase
       .from("transactions")
-      .update({ rejected: true })
+      .update({ rejected: true, updated_at: new Date() })
       .eq("id", id);
 
     if (!error) {
@@ -180,8 +180,8 @@ const TransactionsScreen = ({
         )
         .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
         .eq("rejected", false)
-        .order("updated_at", { ascending: false })
-        .limit(10);
+        .order("updated_at", { ascending: false });
+      // .limit(10);
 
       if (error && status !== 406) {
         throw error;

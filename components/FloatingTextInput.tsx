@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
     margin: 20,
     marginVertical: 30,
     borderRadius: 12,
-    fontFamily: "Avenir-Medium",
     fontSize: 16,
   },
   labelContainer: {
@@ -136,7 +135,6 @@ const styles = StyleSheet.create({
     marginVertical: 30,
   },
   label: {
-    fontFamily: "Avenir-Heavy",
     fontSize: 16,
   },
   error: {
