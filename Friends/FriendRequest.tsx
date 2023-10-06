@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { err } from "react-native-svg/lib/typescript/xml";
 import { Session } from "@supabase/supabase-js";
+import FloatingTextInput from "../components/FloatingTextInput";
 
 type ItemProps = {
   name: string | null;
@@ -147,6 +148,10 @@ const FriendRequest = ({
     navigation.navigate("Friends", { reload: true });
   };
 
+  const handleChangeSearchName = (text: string) => {
+    setSearchName(text);
+  };
+
   return (
     <View
       style={{
@@ -156,27 +161,12 @@ const FriendRequest = ({
       }}
     >
       {/* search list */}
-      <View style={searchNameFocus ? styles.inputFocus : styles.input}>
-        <FontAwesomeIcon
-          icon={faSearch}
-          color={searchNameFocus ? "#8dfc9e" : "#aaaaaa"}
-        />
-        <TextInput
-          placeholder="Search"
-          style={{ paddingLeft: 10, height: "100%", width: "100%" }}
-          placeholderTextColor={searchNameFocus ? "#8dfc9e" : "#aaaaaa"}
-          onChangeText={(text) => setSearchName(text)}
-          onFocus={() => {
-            setSearchNameFocus(true);
-          }}
-          onBlur={() => {
-            setSearchNameFocus(false);
-          }}
-          value={searchName}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-      </View>
+      <FloatingTextInput
+        label="Search"
+        value={searchName}
+        handleChange={handleChangeSearchName}
+      />
+
       {/* list of people */}
       <SafeAreaView style={styles.listContainer}>
         {people.length > 0 && searchName !== "" && (

@@ -12,11 +12,22 @@ import {
 type Props = React.ComponentProps<typeof TextInput> & {
   label: string;
   errorText?: string | null;
+  secureTextEntry?: boolean | null;
+  handleChange: (text: string) => void;
 };
 
 const FloatingTextInput: React.FC<Props> = (props) => {
-  const { label, errorText, value, style, onBlur, onFocus, ...restOfProps } =
-    props;
+  const {
+    label,
+    errorText,
+    secureTextEntry,
+    value,
+    style,
+    onBlur,
+    onFocus,
+    handleChange,
+    ...restOfProps
+  } = props;
   const [isFocused, setIsFocused] = useState(false);
 
   const inputRef = useRef<TextInput>(null);
@@ -31,7 +42,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     }).start();
   }, [focusAnim, isFocused, value]);
 
-  let color = isFocused ? "#080F9C" : "#B9C4CA";
+  let color = isFocused ? "#8dfc9e" : "#B9C4CA";
   if (errorText) {
     color = "#B00020";
   }
@@ -48,6 +59,9 @@ const FloatingTextInput: React.FC<Props> = (props) => {
         ref={inputRef}
         {...restOfProps}
         value={value}
+        underlineColorAndroid="transparent"
+        autoCapitalize="none"
+        secureTextEntry={secureTextEntry}
         onBlur={(event) => {
           setIsFocused(false);
           onBlur?.(event);
@@ -56,6 +70,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
           setIsFocused(true);
           onFocus?.(event);
         }}
+        onChangeText={handleChange}
       />
       <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
         <Animated.View
@@ -65,7 +80,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
               transform: [
                 {
                   scale: focusAnim.interpolate({
-                    inputRange: [0, 1],
+                    inputRange: [0, 1.25],
                     outputRange: [1, 0.75],
                   }),
                 },
@@ -77,7 +92,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
                 },
                 {
                   translateX: focusAnim.interpolate({
-                    inputRange: [0, 1],
+                    inputRange: [0, 4],
                     outputRange: [16, 0],
                   }),
                 },
@@ -108,7 +123,8 @@ const styles = StyleSheet.create({
     padding: 24,
     borderWidth: 1,
     margin: 20,
-    borderRadius: 4,
+    marginVertical: 30,
+    borderRadius: 12,
     fontFamily: "Avenir-Medium",
     fontSize: 16,
   },
@@ -117,6 +133,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: "white",
     margin: 20,
+    marginVertical: 30,
   },
   label: {
     fontFamily: "Avenir-Heavy",

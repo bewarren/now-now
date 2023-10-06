@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   friendName: {
-    fontWeight: "600",
-    fontSize: 22,
+    fontWeight: "500",
+    fontSize: 20,
   },
   personRequesting: {
     fontWeight: "400",

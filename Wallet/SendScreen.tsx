@@ -20,6 +20,7 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { Session } from "@supabase/supabase-js";
+import FloatingTextInput from "../components/FloatingTextInput";
 
 type ItemProps = {
   name: string | null;
@@ -185,6 +186,14 @@ const SendScreen = ({
     // navigate back to wallet
   };
 
+  const handleSearchNameChange = (text: string) => {
+    setSearchName(text);
+  };
+
+  const handleDescriptionChange = (text: string) => {
+    setDescription(text);
+  };
+
   return (
     <View
       style={{
@@ -195,99 +204,36 @@ const SendScreen = ({
         height: "100%",
       }}
     >
-      {/* search list */}
-      <View style={searchNameFocus ? styles.inputFocus : styles.input}>
-        <FontAwesomeIcon
-          icon={faSearch}
-          color={searchNameFocus ? "#8dfc9e" : "#aaaaaa"}
-        />
-        <TextInput
-          placeholder="To"
-          style={{
-            paddingLeft: 10,
-            height: "100%",
-            width: "100%",
-            fontSize: 17,
-          }}
-          placeholderTextColor={searchNameFocus ? "#8dfc9e" : "#aaaaaa"}
-          onChangeText={(text) => setSearchName(text)}
-          onFocus={() => {
-            setSearchNameFocus(true);
-          }}
-          onBlur={() => {
-            if (people.length === 0 || searchName === "") {
-              setSelectedPerson(null);
-              setSearchNameFocus(false);
-              setSearchName("");
-            }
-          }}
-          value={searchName}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-      </View>
-      {!searchNameFocus && (
-        <View style={amountFocus ? styles.inputFocus : styles.input}>
-          <FontAwesomeIcon
-            icon={faDollar}
-            color={amountFocus ? "#8dfc9e" : "#aaaaaa"}
-          />
+      <FloatingTextInput
+        label="To"
+        value={searchName}
+        handleChange={handleSearchNameChange}
+        onFocus={() => {
+          setSearchNameFocus(true);
+        }}
+        onBlur={() => {
+          if (people.length === 0 || searchName === "") {
+            setSelectedPerson(null);
+            setSearchNameFocus(false);
+            setSearchName("");
+          }
+        }}
+      />
 
-          <TextInput
-            placeholder="Amount"
-            keyboardType="numeric"
-            style={{
-              fontSize: 17,
-              paddingLeft: 10,
-              height: "100%",
-              width: "100%",
-            }}
-            placeholderTextColor={amountFocus ? "#8dfc9e" : "#aaaaaa"}
-            onChangeText={(text) => {
-              handleChange(text);
-            }}
-            onFocus={() => {
-              setAmountFocus(true);
-            }}
-            onBlur={() => {
-              setAmountFocus(false);
-            }}
-            value={amount}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
+      {!searchNameFocus && (
+        <FloatingTextInput
+          label="Amount"
+          keyboardType="numeric"
+          value={amount}
+          handleChange={handleChange}
+        />
       )}
       {!searchNameFocus && (
-        <View
-          style={descriptionFocus ? { ...styles.inputFocus } : styles.input}
-        >
-          <FontAwesomeIcon
-            icon={faFileText}
-            color={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
-          />
-
-          <TextInput
-            placeholder="Description"
-            style={{
-              fontSize: 17,
-              paddingLeft: 10,
-              height: "100%",
-              width: "100%",
-            }}
-            placeholderTextColor={descriptionFocus ? "#8dfc9e" : "#aaaaaa"}
-            onChangeText={(text) => setDescription(text)}
-            onFocus={() => {
-              setDescriptionFocus(true);
-            }}
-            onBlur={() => {
-              setDescriptionFocus(false);
-            }}
-            value={description}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
+        <FloatingTextInput
+          label="Description"
+          value={description}
+          handleChange={handleDescriptionChange}
+        />
       )}
       {!searchNameFocus && (
         <Pressable

@@ -34,64 +34,6 @@ const Item = ({ name, send, request }: ItemProps) => {
       <View style={styles.requestPerson}>
         <Text style={styles.friendName}>{name}</Text>
       </View>
-      <View style={styles.acceptReject}>
-        <Pressable
-          onPress={send}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-            },
-            styles.sendWrapperCustom,
-          ]}
-        >
-          {({ pressed }) => {
-            return (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row-reverse",
-                  justifyContent: "space-around",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faArrowRight}
-                  size={22}
-                  style={{ marginTop: 4.5 }}
-                />
-                <Text style={styles.sendButton}>Send</Text>
-              </View>
-            );
-          }}
-        </Pressable>
-        <Pressable
-          onPress={request}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-            },
-            styles.sendWrapperCustom,
-          ]}
-        >
-          {({ pressed }) => {
-            return (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row-reverse",
-                  justifyContent: "space-around",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faArrowRotateLeft}
-                  size={22}
-                  style={{ marginTop: 4.5 }}
-                />
-                <Text style={styles.sendButton}>Request</Text>
-              </View>
-            );
-          }}
-        </Pressable>
-      </View>
     </View>
   );
 };

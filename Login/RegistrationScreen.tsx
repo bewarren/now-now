@@ -17,6 +17,7 @@ import {
   faPen,
   faUnlock,
 } from "@fortawesome/free-solid-svg-icons";
+import FloatingTextInput from "../components/FloatingTextInput";
 
 const RegistrationScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
@@ -67,6 +68,22 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
     );
   }
 
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+  };
+
+  const handleFullNameChange = (text: string) => {
+    setFullName(text);
+  };
+
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
+  };
+
+  const handleConfirmPasswordChange = (text: string) => {
+    setConfirmPassword(text);
+  };
+
   return (
     <View style={styles.container}>
       <KeyboardAwareScrollView
@@ -78,92 +95,29 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
         }}
         keyboardShouldPersistTaps="always"
       >
-        <View style={emailFocus ? styles.inputFocus : styles.input}>
-          <FontAwesomeIcon
-            icon={faEnvelope}
-            color={emailFocus ? "#8dfc9e" : "#aaaaaa"}
-          />
-          <TextInput
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
-            placeholderTextColor={emailFocus ? "#8dfc9e" : "#aaaaaa"}
-            placeholder="Email"
-            onChangeText={(text) => setEmail(text)}
-            onFocus={() => {
-              setEmailFocus(true);
-            }}
-            onBlur={() => {
-              setEmailFocus(false);
-            }}
-            value={email}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={fullNameFocus ? styles.inputFocus : styles.input}>
-          <FontAwesomeIcon
-            icon={faPen}
-            color={fullNameFocus ? "#8dfc9e" : "#aaaaaa"}
-          />
-          <TextInput
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
-            placeholderTextColor={fullNameFocus ? "#8dfc9e" : "#aaaaaa"}
-            placeholder="Full Name"
-            onChangeText={(text) => setFullName(text)}
-            onFocus={() => {
-              setFullNameFocus(true);
-            }}
-            onBlur={() => {
-              setFullNameFocus(false);
-            }}
-            value={fullName}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={passwordFocus ? styles.inputFocus : styles.input}>
-          <FontAwesomeIcon
-            icon={faUnlock}
-            color={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
-          />
-          <TextInput
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
-            placeholderTextColor={passwordFocus ? "#8dfc9e" : "#aaaaaa"}
-            secureTextEntry
-            placeholder="Password"
-            onChangeText={(text) => setPassword(text)}
-            onFocus={() => {
-              setPasswordFocus(true);
-            }}
-            onBlur={() => {
-              setPasswordFocus(false);
-            }}
-            value={password}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={confirmPasswordFocus ? styles.inputFocus : styles.input}>
-          <FontAwesomeIcon
-            icon={faUnlock}
-            color={confirmPasswordFocus ? "#8dfc9e" : "#aaaaaa"}
-          />
-          <TextInput
-            style={{ paddingLeft: 10, height: "100%", width: "100%" }}
-            placeholderTextColor={confirmPasswordFocus ? "#8dfc9e" : "#aaaaaa"}
-            secureTextEntry
-            placeholder="Confirm Password"
-            onChangeText={(text) => setConfirmPassword(text)}
-            onFocus={() => {
-              setConfirmPasswordFocus(true);
-            }}
-            onBlur={() => {
-              setConfirmPasswordFocus(false);
-            }}
-            value={confirmPassword}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
+        <FloatingTextInput
+          label="Email"
+          value={email}
+          handleChange={handleEmailChange}
+        />
+        <FloatingTextInput
+          label="Full Name"
+          value={fullName}
+          handleChange={handleFullNameChange}
+        />
+        <FloatingTextInput
+          label="Password"
+          value={password}
+          secureTextEntry={true}
+          handleChange={handlePasswordChange}
+        />
+
+        <FloatingTextInput
+          label="Confirm Password"
+          value={confirmPassword}
+          secureTextEntry={true}
+          handleChange={handleConfirmPasswordChange}
+        />
 
         <TouchableOpacity
           style={styles.button}
