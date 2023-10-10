@@ -91,7 +91,7 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
         contentContainerStyle={{
           alignContent: "center",
           justifyContent: "center",
-          marginTop: "50%",
+          marginTop: "33%",
         }}
         keyboardShouldPersistTaps="always"
       >

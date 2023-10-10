@@ -42,7 +42,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     }).start();
   }, [focusAnim, isFocused, value]);
 
-  let color = isFocused ? "#8dfc9e" : "#B9C4CA";
+  let color = isFocused ? "#00db22" : "#B9C4CA";
   if (errorText) {
     color = "#B00020";
   }

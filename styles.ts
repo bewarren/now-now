@@ -147,6 +147,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  profile: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: "10%",
+  },
   balance: {
     paddingTop: 20,
     paddingBottom: 10,
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: "#8dfc9e",
+    backgroundColor: "#00db22",
     marginHorizontal: 35,
     marginTop: 20,
     height: 50,
@@ -222,7 +227,7 @@ const styles = StyleSheet.create({
     color: "#2e2e2d",
   },
   footerLink: {
-    color: "#8dfc9e",
+    color: "#00db22",
     fontWeight: "bold",
     fontSize: 16,
   },

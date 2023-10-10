@@ -20,6 +20,7 @@ import TransactionsScreen from "../Transactions/TransactionsScreen";
 import FriendsScreen from "../Friends/FriendsScreen";
 import FriendsContainer from "./friendsContainer";
 import WalletContainer from "./walletContainer";
+import ProfileScreen from "../components/ProfileScreen";
 
 // import ProfileContainer from "./profileContainer";
 
@@ -144,7 +145,7 @@ const MainContainer = ({ session }: { session: Session }) => {
             },
           })}
         >
-          {(props) => <Account key={session.user.id} session={session} />}
+          {(props) => <ProfileScreen key={session.user.id} session={session} />}
         </Tab.Screen>
       </Tab.Navigator>
       <Animated.View
