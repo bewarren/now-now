@@ -1,4 +1,11 @@
-import { Alert, TouchableOpacity, View, Text, Image } from "react-native";
+import {
+  Alert,
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  Pressable,
+} from "react-native";
 import styles from "../styles";
 import { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
@@ -13,6 +20,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
   const [loading, setLoading] = useState(true);
   const [fullName, setFullName] = useState("");
   const [image, setImage] = useState<string>();
+  // allow editing only on click
 
   useEffect(() => {
     if (session) getProfile();
@@ -61,6 +69,9 @@ const ProfileScreen = ({ session }: { session: Session }) => {
       fr.onload = () => {
         setImage(fr.result as string);
       };
+      // fr.onerror = () => {
+
+      // }
     }
   };
 
@@ -96,32 +107,44 @@ const ProfileScreen = ({ session }: { session: Session }) => {
       <View
         style={{
           flexDirection: "row",
-          marginBottom: 10,
+          marginBottom: 30,
           alignItems: "center",
           justifyContent: "center",
           gap: 5,
         }}
       >
-        {image ? (
-          <Image
-            style={{ width: 150, height: 150, borderRadius: 120 }}
-            source={{ uri: image }}
-          />
-        ) : (
-          <View style={{ width: 80, height: 80, backgroundColor: "#1A1A1A" }} />
-        )}
+        <Pressable onPress={onSelectedImage}>
+          {image ? (
+            <Image
+              style={{ width: 150, height: 150, borderRadius: 120 }}
+              source={{ uri: image }}
+            />
+          ) : (
+            <View
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 120,
+                backgroundColor: "#1A1A1A",
+              }}
+            />
+          )}
+        </Pressable>
       </View>
       <Input label="Full Name" value={fullName || ""} editable={false} />
       <Input label="Email" value={session.user.email || ""} editable={false} />
+      <TouchableOpacity style={styles.button} onPress={() => {}}>
+        <Text style={styles.buttonTitle}>Update Info</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => supabase.auth.signOut()}
       >
         <Text style={styles.buttonTitle}>Logout</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={onSelectedImage}>
+      {/* <TouchableOpacity style={styles.button} onPress={onSelectedImage}>
         <Text style={styles.buttonTitle}>Upload image</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
