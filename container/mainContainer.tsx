@@ -33,8 +33,6 @@ const peopleName = "Friends Container";
 const Tab = createBottomTabNavigator();
 
 const MainContainer = ({ session }: { session: Session }) => {
-  const tabOffsetValue = React.useRef(new Animated.Value(0)).current;
-
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -59,14 +57,6 @@ const MainContainer = ({ session }: { session: Session }) => {
               <FontAwesomeIcon icon={faWallet} size={size} color={color} />
             ),
           }}
-          listeners={({ navigation, route }) => ({
-            tabPress: (e) => {
-              Animated.spring(tabOffsetValue, {
-                toValue: 0,
-                useNativeDriver: true,
-              }).start();
-            },
-          })}
         >
           {(props) => (
             <WalletContainer key={session.user.id} session={session} />
@@ -84,14 +74,6 @@ const MainContainer = ({ session }: { session: Session }) => {
               />
             ),
           }}
-          listeners={({ navigation, route }) => ({
-            tabPress: (e) => {
-              Animated.spring(tabOffsetValue, {
-                toValue: getWidth() * 1.1,
-                useNativeDriver: true,
-              }).start();
-            },
-          })}
         >
           {(props) => (
             <TransactionsScreen
@@ -115,14 +97,6 @@ const MainContainer = ({ session }: { session: Session }) => {
               />
             ),
           }}
-          listeners={({ navigation, route }) => ({
-            tabPress: (e) => {
-              Animated.spring(tabOffsetValue, {
-                toValue: getWidth() * 2.3,
-                useNativeDriver: true,
-              }).start();
-            },
-          })}
         >
           {(props) => (
             <FriendsContainer key={session.user.id} session={session} />
@@ -136,39 +110,12 @@ const MainContainer = ({ session }: { session: Session }) => {
               <FontAwesomeIcon icon={faUser} size={size} color={color} />
             ),
           }}
-          listeners={({ navigation, route }) => ({
-            tabPress: (e) => {
-              Animated.spring(tabOffsetValue, {
-                toValue: getWidth() * 3.5,
-                useNativeDriver: true,
-              }).start();
-            },
-          })}
         >
           {(props) => <ProfileScreen key={session.user.id} session={session} />}
         </Tab.Screen>
       </Tab.Navigator>
-      <Animated.View
-        style={{
-          width: getWidth() - 10,
-          height: 2,
-          backgroundColor: "#00cc1f",
-          position: "absolute",
-          bottom: 89,
-          left: 15,
-          transform: [{ translateX: tabOffsetValue }],
-        }}
-      ></Animated.View>
     </NavigationContainer>
   );
-};
-
-const getWidth = () => {
-  let width = Dimensions.get("window").width;
-
-  width = width - 60;
-
-  return width / 4;
 };
 
 export default MainContainer;
