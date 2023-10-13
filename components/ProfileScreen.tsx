@@ -5,6 +5,7 @@ import {
   Text,
   Image,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import styles from "../styles";
 import { Session } from "@supabase/supabase-js";
@@ -125,9 +126,13 @@ const ProfileScreen = ({ session }: { session: Session }) => {
                 width: 150,
                 height: 150,
                 borderRadius: 120,
-                backgroundColor: "#1A1A1A",
+                backgroundColor: "#00cc1f",
+                margin: "auto",
+                justifyContent: "center",
               }}
-            />
+            >
+              {loading && <ActivityIndicator size="large" color="white" />}
+            </View>
           )}
         </Pressable>
       </View>

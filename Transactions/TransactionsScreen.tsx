@@ -129,22 +129,28 @@ const TransactionsScreen = ({
 }) => {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<any>([]);
+  const [offSet, setOffSet] = useState<number>(10);
 
   useEffect(() => {
     if (session) {
       if (!params) {
-        getTransactions();
+        getTransactions(10);
       } else {
         const { reload } = params;
         if (reload) {
-          getTransactions();
+          getTransactions(10);
         }
       }
     }
   }, [session, params]);
-  // useEffect(() => {
-  //   if (session) getTransactions();
-  // }, [session]);
+
+  const handleEnd = () => {
+    console.log("here", offSet);
+    if (transactions.length >= 10) {
+      setOffSet((prevState: number) => prevState + 10);
+      getTransactions(offSet + 10);
+    }
+  };
 
   const pay = async (id: number) => {
     const { error } = await supabase
@@ -153,7 +159,8 @@ const TransactionsScreen = ({
       .eq("id", id);
 
     if (!error) {
-      getTransactions();
+      getTransactions(10);
+      setOffSet(10);
     }
   };
 
@@ -164,11 +171,12 @@ const TransactionsScreen = ({
       .eq("id", id);
 
     if (!error) {
-      getTransactions();
+      getTransactions(10);
+      setOffSet(10);
     }
   };
 
-  async function getTransactions() {
+  async function getTransactions(offSet: number) {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -180,8 +188,8 @@ const TransactionsScreen = ({
         )
         .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
         .eq("rejected", false)
-        .order("updated_at", { ascending: false });
-      // .limit(10);
+        .order("updated_at", { ascending: false })
+        .limit(offSet);
 
       if (error && status !== 406) {
         throw error;
@@ -199,13 +207,13 @@ const TransactionsScreen = ({
     }
   }
 
-  if (loading) {
-    return (
-      <View style={[styles.container, styles.horizontal]}>
-        <ActivityIndicator size="large" color="#00cc1f" />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={[styles.container, styles.horizontal]}>
+  //       <ActivityIndicator size="large" color="#00cc1f" />
+  //     </View>
+  //   );
+  // }
   return (
     <SafeAreaView style={styles.listContainer}>
       <FlatList
@@ -241,7 +249,13 @@ const TransactionsScreen = ({
           );
         }}
         keyExtractor={(item) => item.id}
+        onEndReached={handleEnd}
       />
+      {loading && (
+        <View style={[styles.container, styles.horizontal]}>
+          <ActivityIndicator size="large" color="#00cc1f" />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

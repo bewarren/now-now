@@ -98,8 +98,9 @@ const FriendRequestList = ({
 }) => {
   const [friendRequests, setFriendRequests] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [offSet, setOffSet] = useState<number>(20);
 
-  const getFriendRequests = async () => {
+  const getFriendRequests = async (offSet: number) => {
     setLoading(true);
     const friendRequestsData: any[] = [];
     const { data, error, status } = await supabase
@@ -107,7 +108,8 @@ const FriendRequestList = ({
       .select(`*, requester: requester_id (full_name)`)
       .eq("addressee_id", session.user.id)
       .eq("accepted", false)
-      .eq("rejected", false);
+      .eq("rejected", false)
+      .limit(offSet);
 
     if (data && !error) {
       setFriendRequests(
@@ -130,7 +132,8 @@ const FriendRequestList = ({
       .select();
 
     if (!error) {
-      getFriendRequests();
+      getFriendRequests(20);
+      setOffSet(20);
       navigation.navigate("Friends", { reload: true });
     }
   };
@@ -142,16 +145,24 @@ const FriendRequestList = ({
       .eq("id", id);
 
     if (!error) {
-      getFriendRequests();
+      getFriendRequests(20);
+      setOffSet(20);
       navigation.navigate("Friends", { reload: false });
     }
   };
 
   useEffect(() => {
     if (session) {
-      getFriendRequests();
+      getFriendRequests(20);
     }
   }, [session]);
+
+  const handleEnd = () => {
+    if (friendRequests.length >= 20) {
+      setOffSet((prevState: number) => prevState + 10);
+      getFriendRequests(offSet + 10);
+    }
+  };
 
   if (loading) {
     return (
@@ -181,6 +192,7 @@ const FriendRequestList = ({
             );
           }}
           keyExtractor={(item) => item.id}
+          onEndReached={handleEnd}
         />
       )}
     </SafeAreaView>

@@ -47,6 +47,15 @@ interface FriendsProps {
 const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
   const [friends, setFriends] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [offSet, setOffSet] = useState<number>(20);
+
+  const handleEnd = () => {
+    if (friends.length >= 10) {
+      setOffSet((prevState: number) => prevState + 10);
+      getFriends(offSet + 10);
+    }
+  };
+
   const findFriends = () => {
     navigation.navigate("Find Friends");
   };
@@ -55,7 +64,7 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
     navigation.navigate("Friend Requests");
   };
 
-  const getFriends = async () => {
+  const getFriends = async (offSet: number) => {
     setLoading(true);
     const formattedFriendData: any[] = [];
     const { data, error } = await supabase
@@ -67,7 +76,9 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
         `requester_id.eq.${session.user.id},and(addressee_id.eq.${session.user.id})`
       )
       .eq("accepted", true)
-      .eq("rejected", false);
+      .eq("rejected", false)
+      .order("updated_at", { ascending: false })
+      .limit(offSet);
 
     // query foreign table up here
     if (data && !error) {
@@ -94,11 +105,11 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
   useEffect(() => {
     if (session) {
       if (!params) {
-        getFriends();
+        getFriends(20);
       } else {
         const { reload } = params;
         if (reload) {
-          getFriends();
+          getFriends(20);
         }
       }
     }
@@ -190,6 +201,7 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
             );
           }}
           keyExtractor={(item) => item.id}
+          onEndReached={handleEnd}
         />
       )}
     </SafeAreaView>
