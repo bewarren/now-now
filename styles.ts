@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 6,
     width: "40%",
-    height: "7.5%",
+    height: "7%",
   },
   payWrapperCustom: {
     borderRadius: 8,

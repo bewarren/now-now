@@ -122,12 +122,16 @@ const SendScreen = ({
   const addSpace = (text: string) => text.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   const removeNonNumeric = (text: string) => text.replace(/[^0-9$.,]/g, "");
 
-  const handleChange = (text: string) =>
-    setAmount(addSpace(handleDecimalsOnValue(removeNonNumeric(text))));
+  const handleChange = (text: string) => {
+    const amount = addSpace(handleDecimalsOnValue(removeNonNumeric(text)));
+    // console.log(amount);
 
-  function checkValue(text: string) {
-    setAmount(handleDecimalsOnValue(text));
-  }
+    setAmount(addSpace(handleDecimalsOnValue(removeNonNumeric(text))));
+  };
+
+  // function checkValue(text: string) {
+  //   setAmount(handleDecimalsOnValue(text));
+  // }
 
   function handleDecimalsOnValue(value: string) {
     const regex = /([0-9]*[\.|\,]{0,1}[0-9]{0,2})/s;
@@ -169,7 +173,7 @@ const SendScreen = ({
         description: description,
         paid: true,
         rejected: false,
-        amount: parseFloat(amount.replace(",", ".").replace(" ", "")),
+        amount: parseFloat(amount.replace(",", ".").replace(/\s/g, "")),
       });
 
       if (error) {

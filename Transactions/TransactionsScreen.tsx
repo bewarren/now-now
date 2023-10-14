@@ -40,7 +40,7 @@ const Item = ({
   let payButton = false;
 
   if (paid) {
-    text = `${from} sent  R${amount} to ${to} `;
+    text = `${from} sent R${amount} to ${to} `;
   } else if (!paid && to === "You") {
     text = `${to} requested R${amount} from ${from}`;
   } else if (!paid && from === "You") {
@@ -145,7 +145,6 @@ const TransactionsScreen = ({
   }, [session, params]);
 
   const handleEnd = () => {
-    console.log("here", offSet);
     if (transactions.length >= 10) {
       setOffSet((prevState: number) => prevState + 10);
       getTransactions(offSet + 10);
@@ -228,7 +227,7 @@ const TransactionsScreen = ({
             .toLocaleString(undefined, {
               maximumFractionDigits: 2,
             })
-            .replace(",", ".");
+            .replaceAll(",", " ");
           const paid = item.paid;
 
           return (

@@ -169,7 +169,7 @@ const RequestScreen = ({
         description: description,
         paid: false,
         rejected: false,
-        amount: parseFloat(amount.replace(",", ".").replace(" ", "")),
+        amount: parseFloat(amount.replace(",", ".").replace(/\s/g, "")),
       });
 
       if (error) {

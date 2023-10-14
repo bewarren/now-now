@@ -13,7 +13,7 @@ const WalletScreen = ({ navigation }: { navigation: any }) => {
   };
   return (
     <View style={styles.wallet}>
-      <Balance />
+      {/* <Balance /> */}
       <SendRequest sendHandler={sendHandler} requestHandler={requestHandler} />
     </View>
   );
