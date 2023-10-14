@@ -142,6 +142,19 @@ const TransactionsScreen = ({
         }
       }
     }
+    const transactionsChannel = supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "transactions" },
+        (payload) => {
+          getTransactions(10);
+        }
+      )
+      .subscribe();
+    return () => {
+      transactionsChannel.unsubscribe();
+    };
   }, [session, params]);
 
   const handleEnd = () => {

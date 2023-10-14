@@ -80,6 +80,8 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
       .order("updated_at", { ascending: false })
       .limit(offSet);
 
+    console.log(data);
+
     // query foreign table up here
     if (data && !error) {
       setLoading(false);

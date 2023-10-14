@@ -80,37 +80,70 @@ const RequestScreen = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const [people, setPeople] = useState<any>([]);
+  const [friends, setFriends] = useState<any>([]);
   const [selectedPerson, setSelectedPerson] = useState<any>(null);
 
   useEffect(() => {
-    if (searchNameFocus && searchName !== "") {
+    if (searchNameFocus && searchName !== "" && friends.length > 0) {
       getPeople(searchName);
     }
   }, [searchName]);
 
-  const getPeople = async (name: string) => {
-    try {
-      setLoading(true);
-      const { data, error, status } = await supabase
-        .from("profiles")
-        .select()
-        .neq("id", session?.user.id)
-        .ilike("full_name", `%${name}%`);
-      if (error && status !== 406) {
-        throw error;
-      }
+  useEffect(() => {
+    getFriends();
+  }, []);
 
-      if (data) {
-        setPeople(data);
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
+  const getFriends = async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("friendships")
+      .select(
+        `*, requester: requester_id (id, full_name), addressee: addressee_id (id, full_name)`
+      )
+      .or(
+        `requester_id.eq.${session.user.id},and(addressee_id.eq.${session.user.id})`
+      )
+      .eq("accepted", true)
+      .eq("rejected", false)
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      Alert.alert(error.message);
     }
+
+    if (data) {
+      setFriends(
+        data.map((friendship) => {
+          const friendName =
+            friendship.addressee.id === session.user.id
+              ? friendship.requester.full_name
+              : friendship.addressee.full_name;
+
+          const friendId =
+            friendship.addressee.id === session.user.id
+              ? friendship.requester.id
+              : friendship.addressee.id;
+
+          return { id: friendId, full_name: friendName };
+        })
+      );
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  };
+
+  const filterList = (list: any, searchValue: string) => {
+    return list.filter((item: any) => {
+      const fullName = `${item.full_name}`.toLowerCase();
+      const trimmedSearchValue = searchValue.replace(/\s+/g, "").toLowerCase();
+      return fullName.includes(trimmedSearchValue);
+    });
+  };
+
+  const getPeople = async (name: string) => {
+    setPeople(filterList(friends, name));
   };
 
   const selectHandler = (item: any) => {
