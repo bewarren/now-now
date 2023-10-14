@@ -81,50 +81,49 @@ const FriendRequest = ({
   }, [searchName]);
 
   const getPeople = async (name: string) => {
-    try {
-      setLoading(true);
+    setLoading(true);
+
+    const { data: friendsData, error: friendsError } = await supabase
+      .from("friendships")
+      .select(
+        `*, requester: requester_id (id, full_name), addressee: addressee_id (id, full_name)`
+      )
+      .or(
+        `requester_id.eq.${session.user.id},and(addressee_id.eq.${session.user.id})`
+      )
+      .eq("accepted", true)
+      .eq("rejected", false)
+      .order("updated_at", { ascending: false });
+
+    if (!friendsError) {
+      const friends = friendsData
+        ? friendsData.map((friendship) => {
+            const friendId =
+              friendship.addressee.id === session.user.id
+                ? friendship.requester.id
+                : friendship.addressee.id;
+
+            return friendId;
+          })
+        : [];
+
+      console.log(`(${friends})`);
+
       const { data, error, status } = await supabase
         .from("profiles")
         .select()
+        .not("id", "in", `(${friends})`)
         .neq("id", session?.user.id)
         .ilike("full_name", `%${name}%`);
-      if (error && status !== 406) {
-        throw error;
-      }
 
-      const { data: friendshipData, error: errorSelect } = await supabase
-        .from("friendships")
-        .select()
-        .in("requester_id", data ? data.map((d) => d.id) : [])
-        .eq("addressee_id", session?.user.id)
-        .single();
-
-      const { data: friendshipDataTwo, error: errorSelectTwo } = await supabase
-        .from("friendships")
-        .select()
-        .in("addressee_id", data ? data.map((d) => d.id) : [])
-        .eq("requester_id", session?.user.id)
-        .single();
-
-      if (!friendshipData && !friendshipDataTwo && data) {
+      if (data && !error) {
         setPeople(data);
         setLoading(false);
       } else {
-        // why does this work?
-        setPeople(
-          data?.filter((d) => {
-            const exists =
-              d.id === friendshipData?.addressee_id ||
-              d.id === friendshipDataTwo?.requester_id;
-            return exists;
-          })
-        );
         setLoading(false);
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
+    } else {
+      setLoading(false);
     }
   };
 
