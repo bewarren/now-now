@@ -134,7 +134,7 @@ const FriendRequestList = ({
     if (!error) {
       getFriendRequests(20);
       setOffSet(20);
-      navigation.navigate("Friends", { reload: true });
+      navigation.navigate("Friends");
     }
   };
 
@@ -147,13 +147,27 @@ const FriendRequestList = ({
     if (!error) {
       getFriendRequests(20);
       setOffSet(20);
-      navigation.navigate("Friends", { reload: false });
+      navigation.navigate("Friends");
     }
   };
 
   useEffect(() => {
     if (session) {
       getFriendRequests(20);
+
+      const friendshipsChannel = supabase
+        .channel("custom-all-channel")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "friendships" },
+          (payload) => {
+            getFriendRequests(20);
+          }
+        )
+        .subscribe();
+      return () => {
+        friendshipsChannel.unsubscribe();
+      };
     }
   }, [session]);
 

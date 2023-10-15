@@ -107,8 +107,6 @@ const FriendRequest = ({
           })
         : [];
 
-      console.log(`(${friends})`);
-
       const { data, error, status } = await supabase
         .from("profiles")
         .select()
@@ -144,7 +142,7 @@ const FriendRequest = ({
         });
       }
     }
-    navigation.navigate("Friends", { reload: true });
+    navigation.navigate("Friends");
   };
 
   const handleChangeSearchName = (text: string) => {

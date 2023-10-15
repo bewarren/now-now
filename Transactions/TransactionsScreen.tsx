@@ -133,14 +133,7 @@ const TransactionsScreen = ({
 
   useEffect(() => {
     if (session) {
-      if (!params) {
-        getTransactions(10);
-      } else {
-        const { reload } = params;
-        if (reload) {
-          getTransactions(10);
-        }
-      }
+      getTransactions(10);
     }
     const transactionsChannel = supabase
       .channel("custom-all-channel")
@@ -155,7 +148,7 @@ const TransactionsScreen = ({
     return () => {
       transactionsChannel.unsubscribe();
     };
-  }, [session, params]);
+  }, [session]);
 
   const handleEnd = () => {
     if (transactions.length >= 10) {

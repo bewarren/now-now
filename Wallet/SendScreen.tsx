@@ -213,7 +213,6 @@ const SendScreen = ({
         console.log(error);
       } else {
         navigation.navigate("Wallet Screen");
-        navigation.navigate("Payments", { reload: true });
       }
     } else {
       console.log("false");

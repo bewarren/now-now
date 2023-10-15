@@ -104,16 +104,23 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
 
   useEffect(() => {
     if (session) {
-      if (!params) {
-        getFriends(20);
-      } else {
-        const { reload } = params;
-        if (reload) {
-          getFriends(20);
-        }
-      }
+      getFriends(20);
+
+      const friendshipsChannel = supabase
+        .channel("custom-all-channel")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "friendships" },
+          (payload) => {
+            getFriends(20);
+          }
+        )
+        .subscribe();
+      return () => {
+        friendshipsChannel.unsubscribe();
+      };
     }
-  }, [session, params]);
+  }, [session]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
