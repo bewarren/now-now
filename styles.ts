@@ -212,6 +212,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  rowButton: {
+    backgroundColor: "#00db22",
+    marginHorizontal: 35,
+    marginTop: 20,
+    height: 50,
+    width: "45%",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   buttonTitle: {
     color: "#ffffff",
     fontSize: 18,

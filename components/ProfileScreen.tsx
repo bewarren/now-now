@@ -16,12 +16,17 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { decode } from "base64-arraybuffer";
 import { FileObject } from "@supabase/storage-js";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import FloatingTextInput from "./FloatingTextInput";
 
 const ProfileScreen = ({ session }: { session: Session }) => {
   const [loading, setLoading] = useState(true);
   const [fullName, setFullName] = useState("");
+  const [fullNameFocus, setFullNameFocus] = useState<boolean>(false);
   const [image, setImage] = useState<string>();
-  // allow editing only on click
+  const [edit, setEdit] = useState<boolean>(false);
+  const [loadingImage, setLoadingImage] = useState<boolean>(false);
 
   useEffect(() => {
     if (session) getProfile();
@@ -61,7 +66,8 @@ const ProfileScreen = ({ session }: { session: Session }) => {
   }, [session.user]);
 
   const loadImages = async () => {
-    const { data } = await supabase.storage
+    setLoadingImage(true);
+    const { data, error } = await supabase.storage
       .from("avatars")
       .download(`${session.user.id}.png`);
     if (data) {
@@ -69,10 +75,15 @@ const ProfileScreen = ({ session }: { session: Session }) => {
       fr.readAsDataURL(data!);
       fr.onload = () => {
         setImage(fr.result as string);
+        setLoadingImage(false);
       };
-      // fr.onerror = () => {
+    }
 
-      // }
+    if (error) {
+      Alert.alert(error.message);
+      setLoadingImage(false);
+    } else {
+      setLoadingImage(false);
     }
   };
 
@@ -85,6 +96,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
     });
 
     if (!result.canceled) {
+      setLoadingImage(true);
       const img = result.assets[0];
       const base64 = await FileSystem.readAsStringAsync(img.uri, {
         encoding: "base64",
@@ -98,10 +110,42 @@ const ProfileScreen = ({ session }: { session: Session }) => {
           upsert: true,
         });
 
-      console.log(error);
-      loadImages();
+      if (!error) {
+        loadImages();
+      } else {
+        Alert.alert("error");
+        setLoadingImage(false);
+      }
     }
   };
+
+  const handleEdit = () => {
+    setEdit((prevState) => !prevState);
+  };
+
+  const handleFullNameChange = (text: string) => {
+    setFullName(text);
+  };
+
+  const update = async () => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ full_name: fullName })
+      .eq("id", session.user.id);
+
+    if (!error) {
+      setEdit(false);
+      getProfile();
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size="large" color="#00cc1f" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.profile}>
@@ -114,12 +158,43 @@ const ProfileScreen = ({ session }: { session: Session }) => {
           gap: 5,
         }}
       >
-        <Pressable onPress={onSelectedImage}>
+        <Pressable onPress={edit && !loadingImage ? onSelectedImage : () => {}}>
           {image ? (
-            <Image
-              style={{ width: 150, height: 150, borderRadius: 120 }}
-              source={{ uri: image }}
-            />
+            <View>
+              <Image
+                style={{ width: 150, height: 150, borderRadius: 120 }}
+                source={{ uri: image }}
+              />
+              {loadingImage && (
+                <ActivityIndicator
+                  size="large"
+                  color="white"
+                  style={{
+                    margin: "40%",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: 23,
+                    height: 23,
+                  }}
+                />
+              )}
+              {edit && !loadingImage && (
+                <FontAwesomeIcon
+                  icon={faEdit}
+                  size={20}
+                  style={{
+                    margin: "40%",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: 23,
+                    height: 23,
+                    color: "white",
+                  }}
+                />
+              )}
+            </View>
           ) : (
             <View
               style={{
@@ -131,22 +206,86 @@ const ProfileScreen = ({ session }: { session: Session }) => {
                 justifyContent: "center",
               }}
             >
-              {loading && <ActivityIndicator size="large" color="white" />}
+              {loadingImage && (
+                <ActivityIndicator
+                  size="large"
+                  color="white"
+                  style={{
+                    margin: "40%",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: 23,
+                    height: 23,
+                  }}
+                />
+              )}
+              {edit && !loadingImage && (
+                <FontAwesomeIcon
+                  icon={faEdit}
+                  size={22}
+                  style={{ marginTop: 4.5 }}
+                />
+              )}
             </View>
           )}
         </Pressable>
       </View>
-      <Input label="Full Name" value={fullName || ""} editable={false} />
-      <Input label="Email" value={session.user.email || ""} editable={false} />
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
-        <Text style={styles.buttonTitle}>Update Info</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => supabase.auth.signOut()}
-      >
-        <Text style={styles.buttonTitle}>Logout</Text>
-      </TouchableOpacity>
+      <FloatingTextInput
+        label="Full Name"
+        value={fullName || ""}
+        editable={edit}
+        handleChange={handleFullNameChange}
+        onFocus={() => {
+          setFullNameFocus(true);
+        }}
+        onBlur={() => {
+          setFullNameFocus(false);
+        }}
+      />
+      <FloatingTextInput
+        label="Email"
+        value={session.user.email || ""}
+        editable={false}
+        handleChange={handleFullNameChange}
+        onFocus={() => {
+          setFullNameFocus(true);
+        }}
+        onBlur={() => {
+          setFullNameFocus(false);
+        }}
+      />
+      {/* <Input
+        label="Full Name"
+        value={fullName || ""}
+        editable={edit}
+        onChange={edit ? handleFullNameChange : () => {}}
+      /> */}
+      {/* <Input label="Email" value={session.user.email || ""} editable={false} /> */}
+      {edit && (
+        <View style={styles.payCancelRow}>
+          <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
+            <Text style={styles.buttonTitle}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.rowButton} onPress={update}>
+            <Text style={styles.buttonTitle}>Save Changes</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {!edit && (
+        <View style={styles.payCancelRow}>
+          <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
+            <Text style={styles.buttonTitle}>Edit Information</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.rowButton}
+            onPress={() => supabase.auth.signOut()}
+          >
+            <Text style={styles.buttonTitle}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* <TouchableOpacity style={styles.button} onPress={onSelectedImage}>
         <Text style={styles.buttonTitle}>Upload image</Text>
       </TouchableOpacity> */}

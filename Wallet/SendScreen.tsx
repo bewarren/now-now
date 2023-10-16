@@ -210,12 +210,12 @@ const SendScreen = ({
       });
 
       if (error) {
-        console.log(error);
+        Alert.alert("Error");
       } else {
         navigation.navigate("Wallet Screen");
       }
     } else {
-      console.log("false");
+      Alert.alert("Please select all values");
     }
 
     // add to database
