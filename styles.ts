@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginTop: 30,
     margin: 0,
+    marginBottom: 150,
     height: "100%",
   },
   sendRow: {

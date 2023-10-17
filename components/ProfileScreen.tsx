@@ -6,10 +6,11 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import styles from "../styles";
 import { Session } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Input } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
@@ -19,11 +20,20 @@ import { FileObject } from "@supabase/storage-js";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import FloatingTextInput from "./FloatingTextInput";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+type OpenURLButtonProps = {
+  url: string;
+  children: string;
+};
 
 const ProfileScreen = ({ session }: { session: Session }) => {
   const [loading, setLoading] = useState(true);
-  const [fullName, setFullName] = useState("");
-  const [fullNameFocus, setFullNameFocus] = useState<boolean>(false);
+
+  const [fullName, setFullName] = useState<any>("");
+
+  const [snapScanLink, setSnapScanLink] = useState<any>("");
+
   const [image, setImage] = useState<string>();
   const [edit, setEdit] = useState<boolean>(false);
   const [loadingImage, setLoadingImage] = useState<boolean>(false);
@@ -39,7 +49,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
 
       let { data, error, status } = await supabase
         .from("profiles")
-        .select(`full_name`)
+        .select(`full_name, snapscan_link`)
         .eq("id", session?.user.id)
         .single();
       if (error && status !== 406) {
@@ -48,6 +58,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
 
       if (data) {
         setFullName(data.full_name);
+        setSnapScanLink(data.snapscan_link);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -119,6 +130,19 @@ const ProfileScreen = ({ session }: { session: Session }) => {
     }
   };
 
+  const handlePress = useCallback(async () => {
+    // Checking if the link is supported for links with custom URL scheme.
+    const supported = await Linking.canOpenURL(snapScanLink);
+
+    if (supported) {
+      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+      // by some browser in the mobile
+      await Linking.openURL(snapScanLink);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${snapScanLink}`);
+    }
+  }, [snapScanLink]);
+
   const handleEdit = () => {
     setEdit((prevState) => !prevState);
   };
@@ -127,10 +151,14 @@ const ProfileScreen = ({ session }: { session: Session }) => {
     setFullName(text);
   };
 
+  const handleSnapScanLinkChange = (text: string) => {
+    setSnapScanLink(text);
+  };
+
   const update = async () => {
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName })
+      .update({ full_name: fullName, snapscan_link: snapScanLink })
       .eq("id", session.user.id);
 
     if (!error) {
@@ -149,146 +177,143 @@ const ProfileScreen = ({ session }: { session: Session }) => {
 
   return (
     <View style={styles.profile}>
-      <View
-        style={{
-          flexDirection: "row",
-          marginBottom: 30,
-          alignItems: "center",
+      <KeyboardAwareScrollView
+        style={{ flex: 1, width: "100%" }}
+        contentContainerStyle={{
+          alignContent: "center",
           justifyContent: "center",
-          gap: 5,
+          marginTop: "0%",
+          marginBottom: "0%",
         }}
+        keyboardShouldPersistTaps="always"
       >
-        <Pressable onPress={edit && !loadingImage ? onSelectedImage : () => {}}>
-          {image ? (
-            <View>
-              <Image
-                style={{ width: 150, height: 150, borderRadius: 120 }}
-                source={{ uri: image }}
-              />
-              {loadingImage && (
-                <ActivityIndicator
-                  size="large"
-                  color="white"
-                  style={{
-                    margin: "40%",
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: 23,
-                    height: 23,
-                  }}
-                />
-              )}
-              {edit && !loadingImage && (
-                <FontAwesomeIcon
-                  icon={faEdit}
-                  size={20}
-                  style={{
-                    margin: "40%",
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: 23,
-                    height: 23,
-                    color: "white",
-                  }}
-                />
-              )}
-            </View>
-          ) : (
-            <View
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 120,
-                backgroundColor: "#00cc1f",
-                margin: "auto",
-                justifyContent: "center",
-              }}
-            >
-              {loadingImage && (
-                <ActivityIndicator
-                  size="large"
-                  color="white"
-                  style={{
-                    margin: "40%",
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: 23,
-                    height: 23,
-                  }}
-                />
-              )}
-              {edit && !loadingImage && (
-                <FontAwesomeIcon
-                  icon={faEdit}
-                  size={22}
-                  style={{ marginTop: 4.5 }}
-                />
-              )}
-            </View>
-          )}
-        </Pressable>
-      </View>
-      <FloatingTextInput
-        label="Full Name"
-        value={fullName || ""}
-        editable={edit}
-        handleChange={handleFullNameChange}
-        onFocus={() => {
-          setFullNameFocus(true);
-        }}
-        onBlur={() => {
-          setFullNameFocus(false);
-        }}
-      />
-      <FloatingTextInput
-        label="Email"
-        value={session.user.email || ""}
-        editable={false}
-        handleChange={handleFullNameChange}
-        onFocus={() => {
-          setFullNameFocus(true);
-        }}
-        onBlur={() => {
-          setFullNameFocus(false);
-        }}
-      />
-      {/* <Input
-        label="Full Name"
-        value={fullName || ""}
-        editable={edit}
-        onChange={edit ? handleFullNameChange : () => {}}
-      /> */}
-      {/* <Input label="Email" value={session.user.email || ""} editable={false} /> */}
-      {edit && (
-        <View style={styles.payCancelRow}>
-          <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
-            <Text style={styles.buttonTitle}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.rowButton} onPress={update}>
-            <Text style={styles.buttonTitle}>Save Changes</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      {!edit && (
-        <View style={styles.payCancelRow}>
-          <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
-            <Text style={styles.buttonTitle}>Edit Information</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.rowButton}
-            onPress={() => supabase.auth.signOut()}
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 30,
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 5,
+          }}
+        >
+          <Pressable
+            onPress={edit && !loadingImage ? onSelectedImage : () => {}}
           >
-            <Text style={styles.buttonTitle}>Logout</Text>
-          </TouchableOpacity>
+            {image ? (
+              <View>
+                <Image
+                  style={{ width: 150, height: 150, borderRadius: 120 }}
+                  source={{ uri: image }}
+                />
+                {loadingImage && (
+                  <ActivityIndicator
+                    size="large"
+                    color="white"
+                    style={{
+                      margin: "40%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: 23,
+                      height: 23,
+                    }}
+                  />
+                )}
+                {edit && !loadingImage && (
+                  <FontAwesomeIcon
+                    icon={faEdit}
+                    size={20}
+                    style={{
+                      margin: "40%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: 23,
+                      height: 23,
+                      color: "white",
+                    }}
+                  />
+                )}
+              </View>
+            ) : (
+              <View
+                style={{
+                  width: 150,
+                  height: 150,
+                  borderRadius: 120,
+                  backgroundColor: "#00cc1f",
+                  margin: "auto",
+                  justifyContent: "center",
+                }}
+              >
+                {loadingImage && (
+                  <ActivityIndicator
+                    size="large"
+                    color="white"
+                    style={{
+                      margin: "40%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: 23,
+                      height: 23,
+                    }}
+                  />
+                )}
+                {edit && !loadingImage && (
+                  <FontAwesomeIcon
+                    icon={faEdit}
+                    size={22}
+                    style={{ marginTop: 4.5 }}
+                  />
+                )}
+              </View>
+            )}
+          </Pressable>
         </View>
-      )}
+        <FloatingTextInput
+          label="Full Name"
+          value={fullName || ""}
+          editable={edit}
+          handleChange={handleFullNameChange}
+        />
+        <FloatingTextInput
+          label="Email"
+          value={session.user.email || ""}
+          editable={false}
+          handleChange={() => {}}
+        />
+        <FloatingTextInput
+          label="Snapscan Link"
+          value={snapScanLink || ""}
+          editable={edit}
+          handleChange={handleSnapScanLinkChange}
+        />
 
-      {/* <TouchableOpacity style={styles.button} onPress={onSelectedImage}>
-        <Text style={styles.buttonTitle}>Upload image</Text>
-      </TouchableOpacity> */}
+        {edit && (
+          <View style={styles.payCancelRow}>
+            <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
+              <Text style={styles.buttonTitle}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.rowButton} onPress={update}>
+              <Text style={styles.buttonTitle}>Save Changes</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {!edit && (
+          <View style={styles.payCancelRow}>
+            <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
+              <Text style={styles.buttonTitle}>Edit Information</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.rowButton}
+              onPress={() => supabase.auth.signOut()}
+            >
+              <Text style={styles.buttonTitle}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </KeyboardAwareScrollView>
     </View>
   );
 };
