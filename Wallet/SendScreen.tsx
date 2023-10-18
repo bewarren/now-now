@@ -7,9 +7,10 @@ import {
   Alert,
   ActivityIndicator,
   Pressable,
+  Linking,
 } from "react-native";
 import { supabase } from "../lib/supabase";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import styles from "../styles";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -99,7 +100,7 @@ const SendScreen = ({
     const { data, error } = await supabase
       .from("friendships")
       .select(
-        `*, requester: requester_id (id, full_name), addressee: addressee_id (id, full_name)`
+        `*, requester: requester_id (id, full_name, snapscan_link), addressee: addressee_id (id, full_name, snapscan_link)`
       )
       .or(
         `requester_id.eq.${session.user.id},and(addressee_id.eq.${session.user.id})`
@@ -125,7 +126,16 @@ const SendScreen = ({
               ? friendship.requester.id
               : friendship.addressee.id;
 
-          return { id: friendId, full_name: friendName };
+          const snapscan_link =
+            friendship.addressee.id === session.user.id
+              ? friendship.requester.snapscan_link
+              : friendship.addressee.snapscan_link;
+
+          return {
+            id: friendId,
+            full_name: friendName,
+            snapscan_link: snapscan_link,
+          };
         })
       );
       setLoading(false);
@@ -212,7 +222,22 @@ const SendScreen = ({
       if (error) {
         Alert.alert("Error");
       } else {
-        navigation.navigate("Wallet Screen");
+        const valAmount: number = parseFloat(
+          amount.replace(",", ".").replace(/\s/g, "")
+        );
+
+        // console.log(selectedPerson);
+        if (selectedPerson.snapscan_link) {
+          handlePress(selectedPerson, valAmount)
+            .then(() => {
+              navigation.navigate("Wallet Screen");
+            })
+            .catch((err) => {
+              Alert.alert("Error sending");
+            });
+        } else {
+          Alert.alert("Selected Person has no snapscan link");
+        }
       }
     } else {
       Alert.alert("Please select all values");
@@ -229,6 +254,29 @@ const SendScreen = ({
   const handleDescriptionChange = (text: string) => {
     setDescription(text);
   };
+
+  const handlePress = useCallback(
+    async (selectedPerson: any, valAmount: number) => {
+      // Checking if the link is supported for links with custom URL scheme.
+
+      const supported = await Linking.canOpenURL(
+        `${selectedPerson.snapscan_link}&amount=${valAmount}`
+      );
+
+      if (supported) {
+        // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+        // by some browser in the mobile
+        await Linking.openURL(
+          `${selectedPerson.snapscan_link}&amount=${valAmount}`
+        );
+      } else {
+        Alert.alert(
+          `Don't know how to open this URL: ${selectedPerson.snapscan_link}`
+        );
+      }
+    },
+    [selectedPerson]
+  );
 
   return (
     <View
