@@ -1,0 +1,33 @@
+{
+  "cli": {
+    "version": ">= 5.4.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "YOUR_REACT_NATIVE_SUPABASE_URL": "https://zjjyudxnwdjyawdvdlob.supabase.co",
+        "YOUR_REACT_NATIVE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqanl1ZHhud2RqeWF3ZHZkbG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODk1NzgzNjUsImV4cCI6MjAwNTE1NDM2NX0.ToKuYAa0o4ttDIbRX_Sv5WyF3ueS-ibv-FVLeFaT3ws"
+      }
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "env": {
+        "YOUR_REACT_NATIVE_SUPABASE_URL": "https://zjjyudxnwdjyawdvdlob.supabase.co",
+        "YOUR_REACT_NATIVE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqanl1ZHhud2RqeWF3ZHZkbG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODk1NzgzNjUsImV4cCI6MjAwNTE1NDM2NX0.ToKuYAa0o4ttDIbRX_Sv5WyF3ueS-ibv-FVLeFaT3ws"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "dubson25@gmail.com",
+        "ascAppId": "6469808070",
+        "appleTeamId": "2Z2P26VGZX"
+      }
+    }
+  }
+}

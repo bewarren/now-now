@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "now-now",
+    "name": "Now Now",
     "slug": "now-now",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bewnwarren5020.nownow"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "603c965d-8dca-4edf-a15d-ed38cd70c112"
+      }
     }
   }
 }
