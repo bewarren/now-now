@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "nownow",
     "name": "Now Now",
     "slug": "now-now",
     "version": "1.0.3",
@@ -24,6 +25,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "packagerOpts": {
+      "sourceExts": ["cjs"]
     },
     "extra": {
       "eas": {
