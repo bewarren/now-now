@@ -11,6 +11,17 @@
         "YOUR_REACT_NATIVE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqanl1ZHhud2RqeWF3ZHZkbG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODk1NzgzNjUsImV4cCI6MjAwNTE1NDM2NX0.ToKuYAa0o4ttDIbRX_Sv5WyF3ueS-ibv-FVLeFaT3ws"
       }
     },
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "YOUR_REACT_NATIVE_SUPABASE_URL": "https://zjjyudxnwdjyawdvdlob.supabase.co",
+        "YOUR_REACT_NATIVE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqanl1ZHhud2RqeWF3ZHZkbG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODk1NzgzNjUsImV4cCI6MjAwNTE1NDM2NX0.ToKuYAa0o4ttDIbRX_Sv5WyF3ueS-ibv-FVLeFaT3ws"
+      }
+    },
     "preview": {
       "distribution": "internal"
     },
