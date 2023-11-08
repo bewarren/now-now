@@ -83,6 +83,7 @@ const FriendRequest = ({
   const getPeople = async (name: string) => {
     setLoading(true);
 
+    // get all of a users friends
     const { data: friendsData, error: friendsError } = await supabase
       .from("friendships")
       .select(
@@ -91,10 +92,11 @@ const FriendRequest = ({
       .or(
         `requester_id.eq.${session.user.id},and(addressee_id.eq.${session.user.id})`
       )
-      .eq("accepted", true)
-      .eq("rejected", false)
+      // .eq("accepted", true) // removed these as it is a bug that you may both send a friend request and then double count
+      // .eq("rejected", false)
       .order("updated_at", { ascending: false });
 
+    // get ids of their friends
     if (!friendsError) {
       const friends = friendsData
         ? friendsData.map((friendship) => {
@@ -107,6 +109,7 @@ const FriendRequest = ({
           })
         : [];
 
+      // get all people that are not your friends
       const { data, error, status } = await supabase
         .from("profiles")
         .select()
