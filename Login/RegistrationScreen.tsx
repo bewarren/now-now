@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
-  TextInput,
+  KeyboardAvoidingView,
+  Platform,
   View,
   TouchableOpacity,
   Text,
@@ -85,7 +86,10 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <KeyboardAwareScrollView
         style={{ flex: 1, width: "100%" }}
         contentContainerStyle={{
@@ -134,7 +138,7 @@ const RegistrationScreen = ({ navigation }: { navigation: any }) => {
           </Text>
         </View>
       </KeyboardAwareScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

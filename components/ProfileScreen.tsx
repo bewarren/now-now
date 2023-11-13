@@ -6,7 +6,8 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
-  Linking,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import styles from "../styles";
 import { Session } from "@supabase/supabase-js";
@@ -163,7 +164,10 @@ const ProfileScreen = ({ session }: { session: Session }) => {
   }
 
   return (
-    <View style={styles.profile}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.profile}
+    >
       <KeyboardAwareScrollView
         style={{ flex: 1, width: "100%" }}
         contentContainerStyle={{
@@ -301,7 +305,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
           </View>
         )}
       </KeyboardAwareScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

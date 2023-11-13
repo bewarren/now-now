@@ -11,15 +11,8 @@ import {
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useCallback, useEffect, useState } from "react";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import styles from "../styles";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faArrowRight,
-  faDollar,
-  faFileText,
-  faSearch,
-} from "@fortawesome/free-solid-svg-icons";
+
 import { Session } from "@supabase/supabase-js";
 import FloatingTextInput from "../components/FloatingTextInput";
 
