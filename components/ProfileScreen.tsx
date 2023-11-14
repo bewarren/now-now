@@ -74,14 +74,14 @@ const ProfileScreen = ({ session }: { session: Session }) => {
     if (!session.user) return;
 
     // Load user images
-    loadImages();
+    loadImages(session.user.id);
   }, [session.user]);
 
-  const loadImages = async () => {
+  const loadImages = async (id: any) => {
     setLoadingImage(true);
     const { data, error } = await supabase.storage
       .from("avatars")
-      .download(`${session.user.id}.png`);
+      .download(`${id}.png`);
     if (data) {
       const fr = new FileReader();
       fr.readAsDataURL(data!);
@@ -92,7 +92,6 @@ const ProfileScreen = ({ session }: { session: Session }) => {
     }
 
     if (error) {
-      Alert.alert(error.message);
       setLoadingImage(false);
     } else {
       setLoadingImage(false);
@@ -123,7 +122,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
         });
 
       if (!error) {
-        loadImages();
+        loadImages(session.user.id);
       } else {
         Alert.alert("error");
         setLoadingImage(false);
@@ -153,6 +152,10 @@ const ProfileScreen = ({ session }: { session: Session }) => {
       setEdit(false);
       getProfile();
     }
+  };
+
+  const getInitals = (fullName: any) => {
+    return fullName.match(/(\b\S)?/g).join("");
   };
 
   if (loading) {
@@ -237,6 +240,20 @@ const ProfileScreen = ({ session }: { session: Session }) => {
                   justifyContent: "center",
                 }}
               >
+                {!edit && (
+                  <Text
+                    style={{
+                      marginLeft: 40,
+                      margin: "auto",
+                      justifyContent: "center",
+                      fontSize: 50,
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {getInitals(fullName)}
+                  </Text>
+                )}
                 {loadingImage && (
                   <ActivityIndicator
                     size="large"
@@ -255,7 +272,15 @@ const ProfileScreen = ({ session }: { session: Session }) => {
                   <FontAwesomeIcon
                     icon={faEdit}
                     size={22}
-                    style={{ marginTop: 4.5 }}
+                    style={{
+                      margin: "45%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: 23,
+                      height: 23,
+                      color: "white",
+                    }}
                   />
                 )}
               </View>
