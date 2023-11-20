@@ -17,6 +17,11 @@ const styles = StyleSheet.create({
     margin: 0,
     height: "20%",
   },
+  awaitRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   payCancelRow: {
     flex: 1,
     flexDirection: "row",
@@ -213,6 +218,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  awaitButton: {
+    backgroundColor: "#00db22",
+    marginHorizontal: 35,
+    marginTop: 20,
+    width: "30%",
+    height: 50,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   rowButton: {
     backgroundColor: "#00db22",
     marginHorizontal: 35,

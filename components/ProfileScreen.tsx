@@ -243,7 +243,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
                 {!edit && (
                   <Text
                     style={{
-                      marginLeft: 40,
+                      textAlign: "center",
                       margin: "auto",
                       justifyContent: "center",
                       fontSize: 50,

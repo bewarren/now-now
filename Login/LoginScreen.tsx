@@ -10,16 +10,12 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import styles from "../styles";
 import { formValidationLogin, signInWithEmail } from "./loginFunctions";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEnvelope, faUnlock } from "@fortawesome/free-solid-svg-icons";
 import FloatingTextInput from "../components/FloatingTextInput";
 
 const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState("");
-  const [emailFocus, setEmailFocus] = useState(false);
 
   const [password, setPassword] = useState("");
-  const [passwordFocus, setPasswordFocus] = useState(false);
 
   const [loading, setLoading] = useState(false);
 

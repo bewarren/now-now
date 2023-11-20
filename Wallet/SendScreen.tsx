@@ -223,7 +223,7 @@ const SendScreen = ({
         if (selectedPerson.snapscan_link) {
           handlePress(selectedPerson, valAmount)
             .then(() => {
-              navigation.navigate("Wallet Screen");
+              navigation.navigate("Confirm Sending");
             })
             .catch((err) => {
               Alert.alert("Error sending");

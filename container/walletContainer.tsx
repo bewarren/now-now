@@ -4,6 +4,7 @@ import WalletScreen from "../Wallet/WalletScreen";
 import SendScreen from "../Wallet/SendScreen";
 import { Session } from "@supabase/supabase-js";
 import RequestScreen from "../Wallet/RequestScreen";
+import AwaitSending from "../Wallet/AwaitSending";
 
 const WalletContainer = ({ session }: { session: Session }) => {
   const Stack = createNativeStackNavigator();
@@ -11,6 +12,7 @@ const WalletContainer = ({ session }: { session: Session }) => {
   const walletName = "Wallet Screen";
   const sendName = "Send Screen";
   const requestName = "Request Screen";
+  const awaitSendingName = "Confirm Sending";
 
   return (
     <Stack.Navigator
@@ -49,6 +51,7 @@ const WalletContainer = ({ session }: { session: Session }) => {
           />
         )}
       </Stack.Screen>
+
       <Stack.Screen
         name={requestName}
         options={{
@@ -62,6 +65,17 @@ const WalletContainer = ({ session }: { session: Session }) => {
             session={session}
             navigation={props.navigation}
           />
+        )}
+      </Stack.Screen>
+      <Stack.Screen
+        name={awaitSendingName}
+        options={{
+          headerLeft: () => null,
+          title: "Confirm Sending",
+        }}
+      >
+        {(props) => (
+          <AwaitSending key={session.user.id} navigation={props.navigation} />
         )}
       </Stack.Screen>
     </Stack.Navigator>
