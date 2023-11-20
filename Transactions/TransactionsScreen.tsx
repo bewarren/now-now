@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Text,
   View,
+  Image,
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import styles from "../styles";
@@ -20,6 +21,7 @@ type ItemProps = {
   id: number;
   from: string;
   to: string;
+  friendId: string;
   amount: string;
   paid: boolean;
   pay: () => void;
@@ -31,6 +33,7 @@ const Item = ({
   id,
   from,
   to,
+  friendId,
   amount,
   paid,
   pay,
@@ -50,70 +53,169 @@ const Item = ({
     text = "";
   }
 
+  const [image, setImage] = useState<string>();
+  const [loadingImage, setLoadingImage] = useState<boolean>(false);
+
+  const getInitals = (fullName: any) => {
+    return fullName.match(/(\b\S)?/g).join("");
+  };
+
+  useEffect(() => {
+    if (!friendId) return;
+
+    // Load user images
+    loadImages(friendId);
+  }, [friendId]);
+
+  const loadImages = async (id: any) => {
+    setLoadingImage(true);
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .download(`${id}.png`);
+    if (data) {
+      const fr = new FileReader();
+      fr.readAsDataURL(data!);
+      fr.onload = () => {
+        setImage(fr.result as string);
+        setLoadingImage(false);
+      };
+    }
+
+    if (error) {
+      setLoadingImage(false);
+    } else {
+      setLoadingImage(false);
+    }
+  };
+
   return (
     <View style={styles.item}>
-      <Text style={styles.personSending}>{text}</Text>
-      <Text style={styles.description}>{description}</Text>
-      {payButton && (
-        <View style={styles.payCancelRow}>
-          <Pressable
-            onPress={cancel}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-              },
-              styles.payWrapperCustom,
-            ]}
-          >
-            {({ pressed }) => {
-              return (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row-reverse",
-                    justifyContent: "space-around",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faMultiply}
-                    size={22}
-                    style={{ marginTop: 4.5 }}
-                  />
-                  <Text style={styles.sendButton}>Cancel</Text>
-                </View>
-              );
+      {image ? (
+        <View>
+          <Image
+            style={{ width: 60, height: 60, borderRadius: 120 }}
+            source={{ uri: image }}
+          />
+          {loadingImage && (
+            <ActivityIndicator
+              size="large"
+              color="white"
+              style={{
+                margin: "40%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: 23,
+                height: 23,
+              }}
+            />
+          )}
+        </View>
+      ) : (
+        <View
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 120,
+            backgroundColor: "#00cc1f",
+            margin: "auto",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              margin: "auto",
+              justifyContent: "center",
+              fontSize: 30,
+              color: "white",
+              fontWeight: "600",
             }}
-          </Pressable>
-          <Pressable
-            onPress={pay}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-              },
-              styles.payWrapperCustom,
-            ]}
           >
-            {({ pressed }) => {
-              return (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row-reverse",
-                    justifyContent: "space-around",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faArrowRight}
-                    size={20}
-                    style={{ marginTop: 5.5 }}
-                  />
-                  <Text style={styles.sendButton}>Pay</Text>
-                </View>
-              );
-            }}
-          </Pressable>
+            {from === "You" ? getInitals(to) : getInitals(from)}
+          </Text>
+
+          {loadingImage && (
+            <ActivityIndicator
+              size="large"
+              color="white"
+              style={{
+                margin: "40%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: 23,
+                height: 23,
+              }}
+            />
+          )}
         </View>
       )}
+
+      <View style={styles.itemColumn}>
+        <Text style={styles.personSending}>{text}</Text>
+        <Text style={styles.description}>{description}</Text>
+        {payButton && (
+          <View style={styles.payCancelRow}>
+            <Pressable
+              onPress={cancel}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+                },
+                styles.payWrapperCustom,
+              ]}
+            >
+              {({ pressed }) => {
+                return (
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row-reverse",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={faMultiply}
+                      size={22}
+                      style={{ marginTop: 4.5 }}
+                    />
+                    <Text style={styles.sendButton}>Cancel</Text>
+                  </View>
+                );
+              }}
+            </Pressable>
+            <Pressable
+              onPress={pay}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+                },
+                styles.payWrapperCustom,
+              ]}
+            >
+              {({ pressed }) => {
+                return (
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row-reverse",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={faArrowRight}
+                      size={20}
+                      style={{ marginTop: 5.5 }}
+                    />
+                    <Text style={styles.sendButton}>Pay</Text>
+                  </View>
+                );
+              }}
+            </Pressable>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -229,6 +331,9 @@ const TransactionsScreen = ({
             item.from.id === session.user.id ? "You" : item.from.full_name;
           const to = item.to.id === session.user.id ? "You" : item.to.full_name;
 
+          const friendId =
+            item.from.id === session.user.id ? item.to.id : item.from.id;
+
           const amount = item.amount
             .toLocaleString(undefined, {
               maximumFractionDigits: 2,
@@ -242,6 +347,7 @@ const TransactionsScreen = ({
               id={item.id}
               from={from}
               to={to}
+              friendId={friendId}
               amount={amount}
               paid={paid}
               pay={() => {

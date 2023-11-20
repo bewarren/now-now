@@ -90,12 +90,18 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
   item: {
+    flexDirection: "row",
     backgroundColor: "white",
     borderColor: "black",
     borderBottomWidth: 1,
     padding: 20,
     marginVertical: 1,
     marginHorizontal: 12,
+  },
+  itemColumn: {
+    marginLeft: 20,
+    margin: "auto",
+    marginTop: 10,
   },
   friendItem: {
     padding: 20,
