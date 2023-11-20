@@ -6,32 +6,121 @@ import {
   SafeAreaView,
   Text,
   View,
+  Image,
 } from "react-native";
 
-import {
-  faArrowRight,
-  faArrowRotateLeft,
-  faCheck,
-  faPersonCirclePlus,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPersonCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import { faBell as faBellOutline } from "@fortawesome/free-regular-svg-icons";
 import { useEffect, useLayoutEffect, useState } from "react";
 import styles from "../styles";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
-import { dom } from "@fortawesome/fontawesome-svg-core";
 
 type ItemProps = {
   name: string | null;
-  send: () => void;
-  request: () => void;
+  id: string;
 };
 
-const Item = ({ name, send, request }: ItemProps) => {
+const Item = ({ name, id }: ItemProps) => {
+  const [image, setImage] = useState<string>();
+  const [loadingImage, setLoadingImage] = useState<boolean>(false);
+
+  const getInitals = (fullName: any) => {
+    return fullName.match(/(\b\S)?/g).join("");
+  };
+
+  useEffect(() => {
+    if (!id) return;
+
+    // Load user images
+    loadImages(id);
+  }, [id]);
+
+  const loadImages = async (id: any) => {
+    setLoadingImage(true);
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .download(`${id}.png`);
+    if (data) {
+      const fr = new FileReader();
+      fr.readAsDataURL(data!);
+      fr.onload = () => {
+        setImage(fr.result as string);
+        setLoadingImage(false);
+      };
+    }
+
+    if (error) {
+      setLoadingImage(false);
+    } else {
+      setLoadingImage(false);
+    }
+  };
+
   return (
-    <View style={styles.requestItem}>
-      <View style={styles.requestPerson}>
+    <View style={styles.item}>
+      {image ? (
+        <View>
+          <Image
+            style={{ width: 60, height: 60, borderRadius: 120 }}
+            source={{ uri: image }}
+          />
+          {loadingImage && (
+            <ActivityIndicator
+              size="large"
+              color="white"
+              style={{
+                margin: "40%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: 23,
+                height: 23,
+              }}
+            />
+          )}
+        </View>
+      ) : (
+        <View
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 120,
+            backgroundColor: "#00cc1f",
+            margin: "auto",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              margin: "auto",
+              justifyContent: "center",
+              fontSize: 30,
+              color: "white",
+              fontWeight: "600",
+            }}
+          >
+            {getInitals(name)}
+          </Text>
+
+          {loadingImage && (
+            <ActivityIndicator
+              size="large"
+              color="white"
+              style={{
+                margin: "40%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: 23,
+                height: 23,
+              }}
+            />
+          )}
+        </View>
+      )}
+      <View style={styles.friendColumn}>
         <Text style={styles.friendName}>{name}</Text>
       </View>
     </View>
@@ -199,13 +288,11 @@ const FriendsScreen = ({ navigation, session, params }: FriendsProps) => {
               item.addressee_id === session.user.id
                 ? item.requester_name
                 : item.addressee_name;
-            return (
-              <Item
-                name={friendName}
-                send={sendHandler}
-                request={requestHandler}
-              />
-            );
+            const friendId =
+              item.addressee_id === session.user.id
+                ? item.requester_id
+                : item.addressee_id;
+            return <Item name={friendName} id={friendId} />;
           }}
           keyExtractor={(item) => item.id}
           onEndReached={handleEnd}

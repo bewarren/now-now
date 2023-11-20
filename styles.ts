@@ -26,9 +26,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 30,
+    borderColor: "black",
+    borderBottomWidth: 1,
+    marginTop: 10,
     margin: 0,
-    marginBottom: 150,
+    paddingBottom: 20,
     height: "100%",
   },
   sendRow: {
@@ -98,10 +100,22 @@ const styles = StyleSheet.create({
     marginVertical: 1,
     marginHorizontal: 12,
   },
+  itemPay: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    padding: 20,
+    marginVertical: 1,
+    marginHorizontal: 12,
+  },
   itemColumn: {
     marginLeft: 20,
     margin: "auto",
     marginTop: 10,
+  },
+  friendColumn: {
+    marginLeft: 20,
+    margin: "auto",
+    marginTop: 13,
   },
   friendItem: {
     padding: 20,
@@ -137,7 +151,7 @@ const styles = StyleSheet.create({
   },
   friendName: {
     fontWeight: "500",
-    fontSize: 20,
+    fontSize: 24,
   },
   personRequesting: {
     fontWeight: "400",

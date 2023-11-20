@@ -89,133 +89,135 @@ const Item = ({
   };
 
   return (
-    <View style={styles.item}>
-      {image ? (
-        <View>
-          <Image
-            style={{ width: 60, height: 60, borderRadius: 120 }}
-            source={{ uri: image }}
-          />
-          {loadingImage && (
-            <ActivityIndicator
-              size="large"
-              color="white"
-              style={{
-                margin: "40%",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: 23,
-                height: 23,
-              }}
+    <View>
+      <View style={payButton ? styles.itemPay : styles.item}>
+        {image ? (
+          <View>
+            <Image
+              style={{ width: 60, height: 60, borderRadius: 120 }}
+              source={{ uri: image }}
             />
-          )}
-        </View>
-      ) : (
-        <View
-          style={{
-            width: 60,
-            height: 60,
-            borderRadius: 120,
-            backgroundColor: "#00cc1f",
-            margin: "auto",
-            justifyContent: "center",
-          }}
-        >
-          <Text
+            {loadingImage && (
+              <ActivityIndicator
+                size="large"
+                color="white"
+                style={{
+                  margin: "40%",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: 23,
+                  height: 23,
+                }}
+              />
+            )}
+          </View>
+        ) : (
+          <View
             style={{
-              textAlign: "center",
+              width: 60,
+              height: 60,
+              borderRadius: 120,
+              backgroundColor: "#00cc1f",
               margin: "auto",
               justifyContent: "center",
-              fontSize: 30,
-              color: "white",
-              fontWeight: "600",
             }}
           >
-            {from === "You" ? getInitals(to) : getInitals(from)}
-          </Text>
-
-          {loadingImage && (
-            <ActivityIndicator
-              size="large"
-              color="white"
+            <Text
               style={{
-                margin: "40%",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: 23,
-                height: 23,
+                textAlign: "center",
+                margin: "auto",
+                justifyContent: "center",
+                fontSize: 30,
+                color: "white",
+                fontWeight: "600",
               }}
-            />
-          )}
-        </View>
-      )}
+            >
+              {from === "You" ? getInitals(to) : getInitals(from)}
+            </Text>
 
-      <View style={styles.itemColumn}>
-        <Text style={styles.personSending}>{text}</Text>
-        <Text style={styles.description}>{description}</Text>
-        {payButton && (
-          <View style={styles.payCancelRow}>
-            <Pressable
-              onPress={cancel}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-                },
-                styles.payWrapperCustom,
-              ]}
-            >
-              {({ pressed }) => {
-                return (
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row-reverse",
-                      justifyContent: "space-around",
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faMultiply}
-                      size={22}
-                      style={{ marginTop: 4.5 }}
-                    />
-                    <Text style={styles.sendButton}>Cancel</Text>
-                  </View>
-                );
-              }}
-            </Pressable>
-            <Pressable
-              onPress={pay}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-                },
-                styles.payWrapperCustom,
-              ]}
-            >
-              {({ pressed }) => {
-                return (
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row-reverse",
-                      justifyContent: "space-around",
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faArrowRight}
-                      size={20}
-                      style={{ marginTop: 5.5 }}
-                    />
-                    <Text style={styles.sendButton}>Pay</Text>
-                  </View>
-                );
-              }}
-            </Pressable>
+            {loadingImage && (
+              <ActivityIndicator
+                size="large"
+                color="white"
+                style={{
+                  margin: "40%",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: 23,
+                  height: 23,
+                }}
+              />
+            )}
           </View>
         )}
+
+        <View style={styles.itemColumn}>
+          <Text style={styles.personSending}>{text}</Text>
+          <Text style={styles.description}>{description}</Text>
+        </View>
       </View>
+      {payButton && (
+        <View style={styles.payCancelRow}>
+          <Pressable
+            onPress={cancel}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+              },
+              styles.payWrapperCustom,
+            ]}
+          >
+            {({ pressed }) => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row-reverse",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faMultiply}
+                    size={22}
+                    style={{ marginTop: 4.5 }}
+                  />
+                  <Text style={styles.sendButton}>Cancel</Text>
+                </View>
+              );
+            }}
+          </Pressable>
+          <Pressable
+            onPress={pay}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+              },
+              styles.payWrapperCustom,
+            ]}
+          >
+            {({ pressed }) => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row-reverse",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    size={20}
+                    style={{ marginTop: 5.5 }}
+                  />
+                  <Text style={styles.sendButton}>Pay</Text>
+                </View>
+              );
+            }}
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 };
