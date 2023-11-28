@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     padding: 24,
     borderWidth: 1,
     margin: 20,
-    marginVertical: 30,
+    marginVertical: 20,
     borderRadius: 12,
     fontSize: 16,
   },
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: "white",
     margin: 20,
-    marginVertical: 30,
+    marginVertical: 20,
   },
   label: {
     fontSize: 16,

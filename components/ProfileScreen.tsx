@@ -184,10 +184,10 @@ const ProfileScreen = ({ session }: { session: Session }) => {
         <View
           style={{
             flexDirection: "row",
-            marginBottom: 30,
+            marginBottom: 10,
             alignItems: "center",
             justifyContent: "center",
-            gap: 5,
+            gap: 2,
           }}
         >
           <Pressable
