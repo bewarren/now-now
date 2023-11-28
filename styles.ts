@@ -13,9 +13,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 30,
+    marginTop: 20,
     margin: 0,
-    height: "20%",
+    width: "100%",
   },
   awaitRow: {
     flex: 1,
@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 6,
     width: "40%",
-    height: "7%",
   },
   payWrapperCustom: {
     borderRadius: 8,
@@ -111,6 +110,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     margin: "auto",
     marginTop: 10,
+    flexShrink: 1,
   },
   friendColumn: {
     marginLeft: 20,
@@ -162,6 +162,12 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     marginTop: 2,
+    flexWrap: "wrap",
+  },
+  date: {
+    fontSize: 12,
+    fontWeight: "300",
+    marginTop: 2,
   },
   container: {
     flex: 1,
@@ -172,11 +178,12 @@ const styles = StyleSheet.create({
   wallet: {
     flex: 1,
     backgroundColor: "#fff",
+    height: "100%",
   },
   profile: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: "10%",
+    paddingTop: "5%",
   },
   balance: {
     paddingTop: 20,

@@ -24,6 +24,7 @@ type ItemProps = {
   friendId: string;
   amount: string;
   paid: boolean;
+  date: string;
   pay: () => void;
   cancel: () => void;
 };
@@ -36,6 +37,7 @@ const Item = ({
   friendId,
   amount,
   paid,
+  date,
   pay,
   cancel,
 }: ItemProps) => {
@@ -43,7 +45,7 @@ const Item = ({
   let payButton = false;
 
   if (paid) {
-    text = `${from} sent R${amount} to ${to} `;
+    text = `${from} paid ${to} R${amount}`;
   } else if (!paid && to === "You") {
     text = `${to} requested R${amount} from ${from}`;
   } else if (!paid && from === "You") {
@@ -155,7 +157,9 @@ const Item = ({
 
         <View style={styles.itemColumn}>
           <Text style={styles.personSending}>{text}</Text>
+
           <Text style={styles.description}>{description}</Text>
+          <Text style={styles.date}>{date}</Text>
         </View>
       </View>
       {payButton && (
@@ -293,7 +297,7 @@ const TransactionsScreen = ({
       let { data, error, status } = await supabase
         .from("transactions")
         .select(
-          `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount, paid`
+          `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount, paid, updated_at`
         )
         .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
         .eq("rejected", false)
@@ -352,6 +356,7 @@ const TransactionsScreen = ({
               friendId={friendId}
               amount={amount}
               paid={paid}
+              date={new Date(item.updated_at).toDateString()}
               pay={() => {
                 pay(item.id);
               }}

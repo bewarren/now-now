@@ -13,7 +13,10 @@ const FriendsContainer = ({ session }: { session: Session }) => {
 
   return (
     <Stack.Navigator initialRouteName={friendsListName}>
-      <Stack.Screen name={friendsListName} options={{ headerShown: true }}>
+      <Stack.Screen
+        name={friendsListName}
+        options={{ headerShown: true, title: "My Friends" }}
+      >
         {(props) => (
           <FriendsScreen
             navigation={props.navigation}

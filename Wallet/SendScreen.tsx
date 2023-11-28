@@ -307,7 +307,7 @@ const SendScreen = ({
       )}
       {!searchNameFocus && (
         <FloatingTextInput
-          label="Description"
+          label="What is this for?"
           value={description}
           handleChange={handleDescriptionChange}
         />

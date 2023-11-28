@@ -6,6 +6,10 @@ const Balance = () => {
     <View style={styles.balance}>
       <Text style={styles.yourBalance}>Your Balance</Text>
       <Text style={styles.balanceFont}>R 10</Text>
+      {/* <Text>Total Incoming</Text>
+      <Text style={styles.balanceFont}>R 5</Text>
+      <Text>Total Outgoing</Text>
+      <Text style={styles.balanceFont}>R 5</Text> */}
     </View>
   );
 };

@@ -25,7 +25,7 @@ const WalletContainer = ({ session }: { session: Session }) => {
         name={walletName}
         options={{
           headerLeft: () => null,
-          title: "Wallet",
+          title: "My Wallet",
         }}
       >
         {(props) => (

@@ -231,9 +231,9 @@ const RequestScreen = ({
       style={{
         flex: 1,
         width: "100%",
+        height: "100%",
         backgroundColor: "white",
         flexDirection: "column",
-        height: "100%",
       }}
     >
       {/* search list */}
@@ -263,7 +263,7 @@ const RequestScreen = ({
       )}
       {!searchNameFocus && (
         <FloatingTextInput
-          label="Description"
+          label="What is this for?"
           value={description}
           handleChange={handleDescriptionChange}
         />
