@@ -26,10 +26,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
+    borderColor: "black",
+    marginHorizontal: 16,
+    borderBottomWidth: 1,
     marginTop: 10,
     margin: 0,
     paddingBottom: 20,
     height: "100%",
+  },
+  filterRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
+    marginHorizontal: 5,
+    paddingBottom: 10,
   },
   sendRow: {
     flex: 1,
@@ -40,6 +51,12 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     fontSize: 24,
+    textAlign: "center",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  filterButton: {
+    fontSize: 20,
     textAlign: "center",
     alignContent: "center",
     alignItems: "center",
@@ -60,7 +77,7 @@ const styles = StyleSheet.create({
   payWrapperCustom: {
     borderRadius: 8,
     padding: 6,
-    width: "40%",
+    width: "33%",
   },
   friendWrapperCustom: {
     borderRadius: 8,

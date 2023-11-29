@@ -228,8 +228,6 @@ const Item = ({
 
 const TransactionsScreen = ({
   session,
-  navigation,
-  params,
 }: {
   session: Session;
   navigation: any;
@@ -238,10 +236,11 @@ const TransactionsScreen = ({
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<any>([]);
   const [offSet, setOffSet] = useState<number>(10);
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
   useEffect(() => {
     if (session) {
-      getTransactions(10);
+      getTransactions(10, selectedFilter);
     }
     const transactionsChannel = supabase
       .channel("custom-all-channel")
@@ -249,19 +248,19 @@ const TransactionsScreen = ({
         "postgres_changes",
         { event: "*", schema: "public", table: "transactions" },
         (payload) => {
-          getTransactions(10);
+          getTransactions(10, selectedFilter);
         }
       )
       .subscribe();
     return () => {
       transactionsChannel.unsubscribe();
     };
-  }, [session]);
+  }, [session, selectedFilter]);
 
   const handleEnd = () => {
     if (transactions.length >= 10) {
       setOffSet((prevState: number) => prevState + 10);
-      getTransactions(offSet + 10);
+      getTransactions(offSet + 10, selectedFilter);
     }
   };
 
@@ -272,7 +271,7 @@ const TransactionsScreen = ({
       .eq("id", id);
 
     if (!error) {
-      getTransactions(10);
+      getTransactions(10, selectedFilter);
       setOffSet(10);
     }
   };
@@ -284,32 +283,67 @@ const TransactionsScreen = ({
       .eq("id", id);
 
     if (!error) {
-      getTransactions(10);
+      getTransactions(10, selectedFilter);
       setOffSet(10);
     }
   };
 
-  async function getTransactions(offSet: number) {
+  async function getTransactions(offSet: number, filter: string) {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      let { data, error, status } = await supabase
-        .from("transactions")
-        .select(
-          `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount, paid, updated_at`
-        )
-        .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
-        .eq("rejected", false)
-        .order("updated_at", { ascending: false })
-        .limit(offSet);
+      if (filter === "all") {
+        let { data, error, status } = await supabase
+          .from("transactions")
+          .select(
+            `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount, paid, updated_at`
+          )
+          .or(`from_id.eq.${session.user.id},and(to_id.eq.${session.user.id})`)
+          .eq("rejected", false)
+          .order("updated_at", { ascending: false })
+          .limit(offSet);
+        if (error && status !== 406) {
+          throw error;
+        }
 
-      if (error && status !== 406) {
-        throw error;
-      }
+        if (data) {
+          setTransactions(data);
+        }
+      } else if (filter === "outgoing") {
+        let { data, error, status } = await supabase
+          .from("transactions")
+          .select(
+            `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount, paid, updated_at`
+          )
+          .eq("from_id", session.user.id)
+          .eq("rejected", false)
+          .order("updated_at", { ascending: false })
+          .limit(offSet);
+        if (error && status !== 406) {
+          throw error;
+        }
 
-      if (data) {
-        setTransactions(data);
+        if (data) {
+          setTransactions(data);
+        }
+      } else {
+        let { data, error, status } = await supabase
+          .from("transactions")
+          .select(
+            `id, description, from: from_id (id, full_name) , to: to_id (id, full_name), amount, paid, updated_at`
+          )
+          .eq("to_id", session.user.id)
+          .eq("rejected", false)
+          .order("updated_at", { ascending: false })
+          .limit(offSet);
+        if (error && status !== 406) {
+          throw error;
+        }
+
+        if (data) {
+          setTransactions(data);
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -320,55 +354,145 @@ const TransactionsScreen = ({
     }
   }
 
-  // if (loading) {
-  //   return (
-  //     <View style={[styles.container, styles.horizontal]}>
-  //       <ActivityIndicator size="large" color="#00cc1f" />
-  //     </View>
-  //   );
-  // }
+  const pressAll = () => {
+    setSelectedFilter("all");
+  };
+
+  const pressOutgoing = () => {
+    setSelectedFilter("outgoing");
+  };
+
+  const pressIncoming = () => {
+    setSelectedFilter("incoming");
+  };
+
   return (
     <SafeAreaView style={styles.listContainer}>
-      <FlatList
-        key={1}
-        data={transactions}
-        renderItem={({ item }) => {
-          const from =
-            item.from.id === session.user.id ? "You" : item.from.full_name;
-          const to = item.to.id === session.user.id ? "You" : item.to.full_name;
+      <View style={{ height: "10%" }}>
+        <View style={styles.filterRow}>
+          <Pressable
+            onPress={pressAll}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed
+                  ? "#61fa78"
+                  : selectedFilter === "all"
+                  ? "#8dfc9e"
+                  : "#fff",
+              },
+              styles.payWrapperCustom,
+            ]}
+          >
+            {({ pressed }) => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <Text style={styles.filterButton}>All</Text>
+                </View>
+              );
+            }}
+          </Pressable>
+          <Pressable
+            onPress={pressOutgoing}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed
+                  ? "#61fa78"
+                  : selectedFilter === "outgoing"
+                  ? "#8dfc9e"
+                  : "#fff",
+              },
+              styles.payWrapperCustom,
+            ]}
+          >
+            {({ pressed }) => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <Text style={styles.filterButton}>Outgoing</Text>
+                </View>
+              );
+            }}
+          </Pressable>
+          <Pressable
+            onPress={pressIncoming}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed
+                  ? "#61fa78"
+                  : selectedFilter === "incoming"
+                  ? "#8dfc9e"
+                  : "#fff",
+              },
+              styles.payWrapperCustom,
+            ]}
+          >
+            {({ pressed }) => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <Text style={styles.filterButton}>Incoming</Text>
+                </View>
+              );
+            }}
+          </Pressable>
+        </View>
+      </View>
+      {(!loading || transactions.length >= 10) && (
+        <FlatList
+          key={1}
+          data={transactions}
+          renderItem={({ item }) => {
+            const from =
+              item.from.id === session.user.id ? "You" : item.from.full_name;
+            const to =
+              item.to.id === session.user.id ? "You" : item.to.full_name;
 
-          const friendId =
-            item.from.id === session.user.id ? item.to.id : item.from.id;
+            const friendId =
+              item.from.id === session.user.id ? item.to.id : item.from.id;
 
-          const amount = item.amount
-            .toLocaleString(undefined, {
-              maximumFractionDigits: 2,
-            })
-            .replaceAll(",", " ");
-          const paid = item.paid;
+            const amount = item.amount
+              .toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })
+              .replaceAll(",", " ");
+            const paid = item.paid;
 
-          return (
-            <Item
-              description={item.description}
-              id={item.id}
-              from={from}
-              to={to}
-              friendId={friendId}
-              amount={amount}
-              paid={paid}
-              date={new Date(item.updated_at).toDateString()}
-              pay={() => {
-                pay(item.id);
-              }}
-              cancel={() => {
-                cancel(item.id);
-              }}
-            />
-          );
-        }}
-        keyExtractor={(item) => item.id}
-        onEndReached={handleEnd}
-      />
+            return (
+              <Item
+                description={item.description}
+                id={item.id}
+                from={from}
+                to={to}
+                friendId={friendId}
+                amount={amount}
+                paid={paid}
+                date={new Date(item.updated_at).toDateString()}
+                pay={() => {
+                  pay(item.id);
+                }}
+                cancel={() => {
+                  cancel(item.id);
+                }}
+              />
+            );
+          }}
+          keyExtractor={(item) => item.id}
+          onEndReached={handleEnd}
+        />
+      )}
       {loading && (
         <View style={[styles.container, styles.horizontal]}>
           <ActivityIndicator size="large" color="#00cc1f" />
