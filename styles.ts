@@ -34,6 +34,16 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     height: "100%",
   },
+  profileButtons: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginHorizontal: 16,
+    marginTop: 10,
+    margin: 0,
+    paddingBottom: 20,
+    height: "100%",
+  },
   filterRow: {
     flex: 1,
     flexDirection: "row",
@@ -189,6 +199,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  hoverLoad: {
+    position: "relative",
   },
   wallet: {
     flex: 1,

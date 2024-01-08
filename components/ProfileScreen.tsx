@@ -133,6 +133,10 @@ const ProfileScreen = ({ session }: { session: Session }) => {
   const handleEdit = () => {
     setEdit((prevState) => !prevState);
   };
+  const handleCancel = () => {
+    handleEdit();
+    getProfile();
+  };
 
   const handleFullNameChange = (text: string) => {
     setFullName(text);
@@ -289,26 +293,29 @@ const ProfileScreen = ({ session }: { session: Session }) => {
         </View>
         <FloatingTextInput
           label="Full Name"
+          border={0}
           value={fullName || ""}
           editable={edit}
           handleChange={handleFullNameChange}
         />
         <FloatingTextInput
           label="Email"
+          border={0}
           value={session.user.email || ""}
           editable={false}
           handleChange={() => {}}
         />
         <FloatingTextInput
           label="Snapscan Link"
+          border={0}
           value={snapScanLink || ""}
           editable={edit}
           handleChange={handleSnapScanLinkChange}
         />
 
         {edit && (
-          <View style={styles.payCancelRow}>
-            <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
+          <View style={styles.profileButtons}>
+            <TouchableOpacity style={styles.rowButton} onPress={handleCancel}>
               <Text style={styles.buttonTitle}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.rowButton} onPress={update}>
@@ -317,7 +324,7 @@ const ProfileScreen = ({ session }: { session: Session }) => {
           </View>
         )}
         {!edit && (
-          <View style={styles.payCancelRow}>
+          <View style={styles.profileButtons}>
             <TouchableOpacity style={styles.rowButton} onPress={handleEdit}>
               <Text style={styles.buttonTitle}>Edit Information</Text>
             </TouchableOpacity>

@@ -101,6 +101,21 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
             </Text>
           </Text>
         </View>
+
+        {/* <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 50,
+            marginHorizontal: 30,
+          }}
+        >
+          <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
+          <View>
+            <Text style={{ width: 50, textAlign: "center" }}>or</Text>
+          </View>
+          <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
+        </View> */}
       </KeyboardAwareScrollView>
     </KeyboardAvoidingView>
   );

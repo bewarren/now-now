@@ -494,7 +494,7 @@ const TransactionsScreen = ({
         />
       )}
       {loading && (
-        <View style={[styles.container, styles.horizontal]}>
+        <View style={[styles.container, styles.horizontal, styles.hoverLoad]}>
           <ActivityIndicator size="large" color="#00cc1f" />
         </View>
       )}

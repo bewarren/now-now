@@ -13,6 +13,7 @@ type Props = React.ComponentProps<typeof TextInput> & {
   label: string;
   errorText?: string | null;
   secureTextEntry?: boolean | null;
+  border?: number;
   handleChange: (text: string) => void;
 };
 
@@ -23,6 +24,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     secureTextEntry,
     value,
     style,
+    border = 1,
     onBlur,
     onFocus,
     handleChange,
@@ -54,6 +56,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
           styles.input,
           {
             borderColor: color,
+            borderWidth: border,
           },
         ]}
         ref={inputRef}
