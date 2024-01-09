@@ -4,7 +4,7 @@ import styles from "../styles";
 const Balance = () => {
   return (
     <View style={styles.balance}>
-      <Text style={styles.yourBalance}>Your Balance</Text>
+      <Text style={styles.yourBalance}>Amount owed</Text>
       <Text style={styles.balanceFont}>R 10</Text>
       {/* <Text>Total Incoming</Text>
       <Text style={styles.balanceFont}>R 5</Text>

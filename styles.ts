@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginTop: 20,
     margin: 0,
+    height: 50,
     width: "100%",
   },
   awaitRow: {
