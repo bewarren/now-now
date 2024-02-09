@@ -265,6 +265,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  info: {
+    marginLeft: 32,
+    marginBottom: 30,
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#00db22",
+  },
   button: {
     backgroundColor: "#00db22",
     marginHorizontal: 35,

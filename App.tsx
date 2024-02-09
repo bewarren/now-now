@@ -8,11 +8,45 @@ import { Session } from "@supabase/supabase-js";
 import MainContainer from "./container/mainContainer";
 import LoginContainer from "./container/loginContainer";
 import styles from "./styles";
+import PaymentMethods from "./Login/PaymentMethods";
+// import PaymentMethods from "./Login/PaymentMethods";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [firstLogin, setFirstLogin] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (session) getProfile();
+  }, [session]);
+
+  async function getProfile() {
+    try {
+      setLoading(true);
+      if (session?.user) {
+        let { data, error, status } = await supabase
+          .from("profiles")
+          .select(`first_login`)
+          .eq("id", session?.user.id)
+          .single();
+        if (error && status !== 406) {
+          throw error;
+        }
+
+        if (data) {
+          setFirstLogin(data.first_login);
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -40,15 +74,17 @@ export default function App() {
     );
   }
 
+  // need to manage when people have signed up but haven't verified email
+
   return (
     <>
-      {session && session.user ? (
+      {session && session.user && !firstLogin && (
         <MainContainer session={session} />
-      ) : (
-        // <Account key={session.user.id} session={session} />
-        // <Auth />
-        <LoginContainer />
       )}
+      {session && session.user && firstLogin && (
+        <PaymentMethods session={session} />
+      )}
+      {!session && <LoginContainer />}
     </>
   );
 }
