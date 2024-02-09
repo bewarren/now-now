@@ -152,10 +152,12 @@ const PaymentMethods = ({ session }: { session: Session }) => {
           <View>
             <Image
               style={{
-                marginLeft: 10,
-                marginBottom: 20,
-                width: 200,
+                marginLeft: "27%",
+                width: 150,
                 height: 50,
+                alignContent: "center",
+                alignItems: "center",
+                justifyContent: "center",
               }}
               source={require("./../assets/SnapScan.png")}
             />
