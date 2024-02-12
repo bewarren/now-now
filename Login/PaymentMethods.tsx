@@ -17,7 +17,7 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
 const PaymentMethods = ({ session }: { session: Session }) => {
-  const [step, setStep] = useState<string>("Bank");
+  const [step, setStep] = useState<string>("Welcome");
 
   const STEPS = ["Welcome", "Bank", "SnapScan", "Summary"];
 
@@ -82,10 +82,8 @@ const PaymentMethods = ({ session }: { session: Session }) => {
 
   const handleNext = () => {
     setStep((prevState) => {
-      if (prevState === "Select") {
+      if (prevState === "Welcome") {
         return "Bank";
-      } else if (prevState === "Select") {
-        return "SnapScan";
       } else if (prevState === "Bank") {
         return "SnapScan";
       } else {
@@ -96,10 +94,12 @@ const PaymentMethods = ({ session }: { session: Session }) => {
 
   const handleBack = () => {
     setStep((prevState) => {
-      if (prevState === "Summary") {
+      if (prevState === "SnapScan") {
+        return "Bank";
+      } else if (prevState === "Summary") {
         return "SnapScan";
       } else {
-        return "Bank";
+        return "Welcome";
       }
     });
   };
@@ -122,10 +122,49 @@ const PaymentMethods = ({ session }: { session: Session }) => {
         contentContainerStyle={{
           alignContent: "center",
           justifyContent: "center",
-          marginTop: "50%",
+          marginTop: "40%",
         }}
         keyboardShouldPersistTaps="always"
       >
+        {step === "Welcome" && (
+          <View>
+            <Text style={styles.welcome}>Welcome to</Text>
+
+            <Image
+              style={{
+                marginTop: 40,
+                marginLeft: "25%",
+                padding: "auto",
+                width: 200,
+                height: 70,
+                alignContent: "center",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              source={require("./../assets/Now-1.png")}
+            />
+            <Image
+              style={{
+                marginTop: 40,
+                marginBottom: 40,
+                marginLeft: "25%",
+                padding: "auto",
+                width: 200,
+                height: 70,
+                alignContent: "center",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              source={require("./../assets/Now-2.png")}
+            />
+            <Text style={styles.welcome}>
+              Enter your details now or come back and do it just now.
+            </Text>
+            <TouchableOpacity style={styles.skipButton} onPress={() => {}}>
+              <Text style={styles.buttonTitleSkip}>Skip</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {step === "Bank" && (
           <View>
             <Text style={styles.info}>Bank Information</Text>
@@ -149,10 +188,10 @@ const PaymentMethods = ({ session }: { session: Session }) => {
           </View>
         )}
         {step === "SnapScan" && (
-          <View>
+          <View style={{ marginTop: "30%" }}>
             <Image
               style={{
-                marginLeft: "27%",
+                marginLeft: "5%",
                 width: 150,
                 height: 50,
                 alignContent: "center",
@@ -170,7 +209,7 @@ const PaymentMethods = ({ session }: { session: Session }) => {
           </View>
         )}
         <View>
-          {(step === "SnapScan" || step === "Summary") && (
+          {(step === "Bank" || step === "SnapScan" || step === "Summary") && (
             <TouchableOpacity
               style={styles.button}
               onPress={() => handleBack()}
@@ -178,7 +217,7 @@ const PaymentMethods = ({ session }: { session: Session }) => {
               <Text style={styles.buttonTitle}>Back</Text>
             </TouchableOpacity>
           )}
-          {(step === "Select" || step === "Bank" || step === "SnapScan") && (
+          {(step === "Welcome" || step === "Bank" || step === "SnapScan") && (
             <TouchableOpacity
               style={styles.button}
               onPress={() => handleNext()}
