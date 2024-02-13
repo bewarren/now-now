@@ -92,8 +92,6 @@ const PaymentMethods = ({
     setSnapScanLink(val);
   };
 
-  const [selected, setSelected] = useState<string[]>([]);
-
   const handleNext = () => {
     setStep((prevState) => {
       if (prevState === "Welcome") {
@@ -126,7 +124,7 @@ const PaymentMethods = ({
     );
   }
 
-  const skipHandler = () => {
+  const submitHandler = () => {
     updateProfile();
     firstLoginHandler();
   };
@@ -179,7 +177,7 @@ const PaymentMethods = ({
             <Text style={styles.welcomeText}>
               Enter your payment details now or come back and do it just now.
             </Text>
-            <TouchableOpacity style={styles.skipButton} onPress={skipHandler}>
+            <TouchableOpacity style={styles.skipButton} onPress={submitHandler}>
               <Text style={styles.buttonTitleSkip}>Skip</Text>
             </TouchableOpacity>
           </View>
@@ -253,10 +251,18 @@ const PaymentMethods = ({
         <View>
           {(step === "Bank" || step === "SnapScan" || step === "Summary") && (
             <TouchableOpacity
-              style={styles.button}
+              style={step !== "Summary" ? styles.button : styles.skipButton}
               onPress={() => handleBack()}
             >
-              <Text style={styles.buttonTitle}>Back</Text>
+              <Text
+                style={
+                  step !== "Summary"
+                    ? styles.buttonTitle
+                    : styles.buttonTitleSkip
+                }
+              >
+                Back
+              </Text>
             </TouchableOpacity>
           )}
           {(step === "Welcome" || step === "Bank" || step === "SnapScan") && (
@@ -265,6 +271,11 @@ const PaymentMethods = ({
               onPress={() => handleNext()}
             >
               <Text style={styles.buttonTitle}>Next</Text>
+            </TouchableOpacity>
+          )}
+          {step === "Summary" && (
+            <TouchableOpacity style={styles.button} onPress={submitHandler}>
+              <Text style={styles.buttonTitle}>Submit</Text>
             </TouchableOpacity>
           )}
         </View>
