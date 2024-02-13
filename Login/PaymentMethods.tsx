@@ -16,7 +16,13 @@ import FloatingTextInput from "../components/FloatingTextInput";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
-const PaymentMethods = ({ session }: { session: Session }) => {
+const PaymentMethods = ({
+  session,
+  firstLoginHandler,
+}: {
+  session: Session;
+  firstLoginHandler: () => void;
+}) => {
   const [step, setStep] = useState<string>("Welcome");
 
   const STEPS = ["Welcome", "Bank", "SnapScan", "Summary"];
@@ -39,10 +45,11 @@ const PaymentMethods = ({ session }: { session: Session }) => {
           .from("profiles")
           .update({
             bank: bank,
-            accountName: accountName,
-            accountNumber: accountNumber,
-
-            firstLogin: false,
+            account_name: accountName,
+            account_number: accountNumber,
+            snapscan_link: snapscanLink,
+            updated_at: new Date(),
+            first_login: false,
           })
           .eq("id", session?.user.id)
           .single();
@@ -78,6 +85,13 @@ const PaymentMethods = ({ session }: { session: Session }) => {
     setAccountNumber(text);
   };
 
+  const handleSnapScanLinkChange = (text: string) => {
+    const link = text.split(" ");
+    const val = link[link.length - 1];
+
+    setSnapScanLink(val);
+  };
+
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleNext = () => {
@@ -111,6 +125,11 @@ const PaymentMethods = ({ session }: { session: Session }) => {
       </View>
     );
   }
+
+  const skipHandler = () => {
+    updateProfile();
+    firstLoginHandler();
+  };
 
   return (
     <KeyboardAvoidingView
@@ -157,10 +176,10 @@ const PaymentMethods = ({ session }: { session: Session }) => {
               }}
               source={require("./../assets/Now-2.png")}
             />
-            <Text style={styles.welcome}>
-              Enter your details now or come back and do it just now.
+            <Text style={styles.welcomeText}>
+              Enter your payment details now or come back and do it just now.
             </Text>
-            <TouchableOpacity style={styles.skipButton} onPress={() => {}}>
+            <TouchableOpacity style={styles.skipButton} onPress={skipHandler}>
               <Text style={styles.buttonTitleSkip}>Skip</Text>
             </TouchableOpacity>
           </View>
@@ -204,8 +223,31 @@ const PaymentMethods = ({ session }: { session: Session }) => {
             <FloatingTextInput
               label="SnapScan Link"
               value={snapscanLink}
-              handleChange={() => {}}
+              handleChange={handleSnapScanLinkChange}
             />
+          </View>
+        )}
+        {step === "Summary" && (
+          <View>
+            <Text style={styles.summaryHeader}>Summary</Text>
+            <Text style={styles.summaryInfo}>My Information</Text>
+            <Text
+              style={styles.infoText}
+            >{`Name: ${session.user.user_metadata.full_name}`}</Text>
+            <Text
+              style={styles.infoText}
+            >{`Email: ${session.user.email}`}</Text>
+            <Text style={styles.summaryInfo}>Payment Information</Text>
+            <Text style={styles.infoText}>{`Bank: ${bank}`}</Text>
+            <Text
+              style={styles.infoText}
+            >{`Account Name: ${accountName}`}</Text>
+            <Text
+              style={styles.infoText}
+            >{`Account Number: ${accountNumber}`}</Text>
+            <Text
+              style={styles.infoText}
+            >{`SnapScan Link: ${snapscanLink}`}</Text>
           </View>
         )}
         <View>

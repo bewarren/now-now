@@ -18,6 +18,10 @@ export default function App() {
 
   const [firstLogin, setFirstLogin] = useState<boolean>(true);
 
+  const firstLoginHandler = () => {
+    setFirstLogin(false);
+  };
+
   useEffect(() => {
     if (session) getProfile();
   }, [session]);
@@ -82,7 +86,10 @@ export default function App() {
         <MainContainer session={session} />
       )}
       {session && session.user && firstLogin && (
-        <PaymentMethods session={session} />
+        <PaymentMethods
+          session={session}
+          firstLoginHandler={firstLoginHandler}
+        />
       )}
       {!session && <LoginContainer />}
     </>
