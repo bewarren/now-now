@@ -53,6 +53,7 @@ const MainContainer = ({ session }: { session: Session }) => {
           name={walletName}
           options={{
             headerShown: false,
+            title: "Home",
             tabBarIcon: ({ size, color }) => (
               <FontAwesomeIcon icon={faWallet} size={size} color={color} />
             ),
