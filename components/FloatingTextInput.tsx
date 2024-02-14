@@ -56,6 +56,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
           styles.input,
           {
             borderColor: color,
+            color: "black",
             borderWidth: border,
           },
         ]}
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     paddingHorizontal: 8,
     backgroundColor: "white",
+
     margin: 20,
     marginVertical: 20,
   },

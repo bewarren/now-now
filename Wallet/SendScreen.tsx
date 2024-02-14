@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Pressable,
   Linking,
+  StyleSheet,
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useCallback, useEffect, useState } from "react";
@@ -15,6 +16,9 @@ import styles from "../styles";
 
 import { Session } from "@supabase/supabase-js";
 import FloatingTextInput from "../components/FloatingTextInput";
+import { SelectList } from "react-native-dropdown-select-list";
+import { Dropdown } from "react-native-element-dropdown";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 type ItemProps = {
   name: string | null;
@@ -66,10 +70,8 @@ const SendScreen = ({
   const [searchNameFocus, setSearchNameFocus] = useState<boolean>(false);
 
   const [amount, setAmount] = useState<string>("");
-  const [amountFocus, setAmountFocus] = useState<boolean>(false);
-
   const [description, setDescription] = useState<string>("");
-  const [descriptionFocus, setDescriptionFocus] = useState<boolean>(false);
+  const [paymentMethod, setPaymentMethod] = useState<string>("");
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -271,6 +273,40 @@ const SendScreen = ({
     [selectedPerson]
   );
 
+  const data = [
+    { label: "Bank EFT", value: "Bank EFT" },
+    { label: "SnapScan", value: "SnapScan" },
+    { label: "Cash", value: "Cash" },
+  ];
+
+  const [payment, setPayment] = useState<boolean>(false);
+
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+  const [isPaymentFocus, setIsPaymentFocus] = useState(false);
+
+  const renderLabel = (text: string) => {
+    if (value || isFocus) {
+      return (
+        <Text style={[newStyles.label, isFocus && { color: "#00db22" }]}>
+          {text}
+        </Text>
+      );
+    }
+    return null;
+  };
+
+  const renderPaymentLabel = (text: string) => {
+    if (payment || isPaymentFocus) {
+      return (
+        <Text style={[newStyles.label, isPaymentFocus && { color: "#00db22" }]}>
+          {text}
+        </Text>
+      );
+    }
+    return null;
+  };
+
   return (
     <View
       style={{
@@ -281,21 +317,33 @@ const SendScreen = ({
         height: "100%",
       }}
     >
-      <FloatingTextInput
-        label="To"
-        value={searchName}
-        handleChange={handleSearchNameChange}
-        onFocus={() => {
-          setSearchNameFocus(true);
-        }}
-        onBlur={() => {
-          if (people.length === 0 || searchName === "") {
-            setSelectedPerson(null);
-            setSearchNameFocus(false);
-            setSearchName("");
-          }
-        }}
-      />
+      <View style={newStyles.container}>
+        {renderLabel("To")}
+        <Dropdown
+          style={[newStyles.dropdown, isFocus && { borderColor: "#00db22" }]}
+          placeholderStyle={newStyles.placeholderStyle}
+          selectedTextStyle={newStyles.selectedTextStyle}
+          inputSearchStyle={newStyles.inputSearchStyle}
+          iconStyle={newStyles.iconStyle}
+          data={friends.map((f: any) => {
+            return { label: f.full_name, value: f };
+          })}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="label"
+          placeholder={!isFocus ? "To" : ""}
+          searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(item: any) => {
+            setSelectedPerson(item.value);
+            setValue(item.label);
+            setIsFocus(false);
+          }}
+        />
+      </View>
 
       {!searchNameFocus && (
         <FloatingTextInput
@@ -312,65 +360,105 @@ const SendScreen = ({
           handleChange={handleDescriptionChange}
         />
       )}
-      {!searchNameFocus && (
-        <Pressable
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-            },
-            styles.walletSendWrapper,
+
+      <View style={newStyles.container}>
+        {renderPaymentLabel("Payment Method")}
+        <Dropdown
+          style={[
+            newStyles.dropdown,
+            isPaymentFocus && { borderColor: "#00db22" },
           ]}
-          onPress={send}
-        >
-          {({ pressed }) => {
-            return (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row-reverse",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={styles.sendButton}>Send</Text>
-              </View>
-            );
+          placeholderStyle={newStyles.placeholderStyle}
+          selectedTextStyle={newStyles.selectedTextStyle}
+          inputSearchStyle={newStyles.inputSearchStyle}
+          iconStyle={newStyles.iconStyle}
+          data={data}
+          search={false}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isPaymentFocus ? "Payment Method" : ""}
+          value={payment}
+          onFocus={() => setIsPaymentFocus(true)}
+          onBlur={() => setIsPaymentFocus(false)}
+          onChange={(item: any) => {
+            setPayment(item.value);
+            setIsPaymentFocus(false);
           }}
-        </Pressable>
-      )}
-      {/* list of people */}
+        />
+      </View>
 
-      {searchNameFocus && (
-        <SafeAreaView style={styles.listContainer}>
-          {people.length > 0 && searchName !== "" && (
-            <FlatList
-              nestedScrollEnabled
-              key={1}
-              data={people}
-              renderItem={({ item }) => {
-                return (
-                  <Item
-                    name={item?.full_name}
-                    select={() => {
-                      selectHandler(item);
-                    }}
-                  />
-                );
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+          },
+          styles.walletSendWrapper,
+        ]}
+        onPress={send}
+      >
+        {({ pressed }) => {
+          return (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row-reverse",
+                justifyContent: "center",
               }}
-              keyExtractor={(item) => item.id}
-            />
-          )}
-
-          {loading && (
-            <View style={[styles.horizontal]}>
-              <ActivityIndicator size="large" color="#00cc1f" />
+            >
+              <Text style={styles.sendButton}>Send</Text>
             </View>
-          )}
-        </SafeAreaView>
-      )}
-
-      {/* list of friend request button on clicking */}
+          );
+        }}
+      </Pressable>
     </View>
   );
 };
 
 export default SendScreen;
+
+const newStyles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    padding: 16,
+  },
+  dropdown: {
+    height: 65,
+    borderColor: "#B9C4CA",
+
+    borderWidth: 1,
+    borderRadius: 12,
+    margin: 5,
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: "absolute",
+    color: "#B9C4CA",
+    backgroundColor: "white",
+    left: 32,
+    top: 19,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color: "#B9C4CA",
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+    borderRadius: 8,
+  },
+});
