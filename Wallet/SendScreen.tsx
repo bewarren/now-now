@@ -9,6 +9,7 @@ import {
   Pressable,
   Linking,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useCallback, useEffect, useState } from "react";
@@ -19,42 +20,9 @@ import FloatingTextInput from "../components/FloatingTextInput";
 import { SelectList } from "react-native-dropdown-select-list";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
-type ItemProps = {
-  name: string | null;
-  select: () => void;
-};
-
-const Item = ({ name, select }: ItemProps) => {
-  return (
-    <View style={styles.friendItem}>
-      <Text style={styles.personSending}>{name}</Text>
-      <Pressable
-        onPress={select}
-        style={({ pressed }) => [
-          {
-            backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-          },
-          styles.friendWrapperCustom,
-        ]}
-      >
-        {({ pressed }) => {
-          return (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row-reverse",
-                justifyContent: "space-around",
-              }}
-            >
-              <Text style={styles.sendButton}>Select</Text>
-            </View>
-          );
-        }}
-      </Pressable>
-    </View>
-  );
-};
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
 
 const SendScreen = ({
   session,
@@ -66,28 +34,72 @@ const SendScreen = ({
   // search list of people with a name
   // limit and scroll on list for more
 
-  const [searchName, setSearchName] = useState<string>("");
-  const [searchNameFocus, setSearchNameFocus] = useState<boolean>(false);
-
   const [amount, setAmount] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState<string>("");
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [screen, setScreen] = useState<string>("Pay");
 
   const [people, setPeople] = useState<any>([]);
   const [friends, setFriends] = useState<any>([]);
   const [selectedPerson, setSelectedPerson] = useState<any>(null);
-
-  useEffect(() => {
-    if (searchNameFocus && searchName !== "" && friends.length > 0) {
-      getPeople(searchName);
-    }
-  }, [searchName]);
+  const [bankDetails, setBankDetails] = useState<any>({});
 
   useEffect(() => {
     getFriends();
   }, []);
+
+  const getBankDetails = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("bank, account_name, account_number")
+      .eq("id", selectedPerson.id);
+
+    if (data && !error) {
+      setBankDetails(data[0]);
+    } else {
+      Alert.alert("Error getting bank details");
+    }
+  };
+
+  useEffect(() => {
+    if (screen === "Bank" && selectedPerson) {
+      getBankDetails();
+    }
+  }, [screen, selectedPerson]);
+
+  const handleNext = () => {
+    setScreen((prevState) => {
+      if (prevState === "Pay" && payment === "Bank EFT") {
+        return "Bank";
+      } else if (prevState === "Pay" && payment === "SnapScan") {
+        if (selectedPerson.snapscan_link) {
+          const valAmount: number = parseFloat(
+            amount.replace(",", ".").replace(/\s/g, "")
+          );
+          handlePress(selectedPerson, valAmount)
+            .then(() => {
+              navigation.navigate("Confirm Sending");
+            })
+            .catch((err) => {
+              Alert.alert("Error sending");
+            });
+        } else {
+          Alert.alert("Selected Person has no snapscan link");
+        }
+        return "SnapScan";
+      } else if (prevState === "Pay" && payment === "SnapScan") {
+        return "Cash";
+      } else {
+        return "Pay";
+      }
+    });
+  };
+
+  const handleBack = () => {
+    setScreen("Pay");
+  };
 
   const getFriends = async () => {
     setLoading(true);
@@ -137,24 +149,6 @@ const SendScreen = ({
     } else {
       setLoading(false);
     }
-  };
-
-  const filterList = (list: any, searchValue: string) => {
-    return list.filter((item: any) => {
-      const fullName = `${item.full_name}`.toLowerCase();
-      const trimmedSearchValue = searchValue.replace(/\s+/g, "").toLowerCase();
-      return fullName.includes(trimmedSearchValue);
-    });
-  };
-
-  const getPeople = async (name: string) => {
-    setPeople(filterList(friends, name));
-  };
-
-  const selectHandler = (item: any) => {
-    setSelectedPerson(item);
-    setSearchName(item.full_name);
-    setSearchNameFocus(false);
   };
 
   const addSpace = (text: string) => text.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -211,28 +205,14 @@ const SendScreen = ({
         description: description,
         paid: true,
         rejected: false,
+        payment_method: payment,
         amount: parseFloat(amount.replace(",", ".").replace(/\s/g, "")),
       });
 
       if (error) {
         Alert.alert("Error");
       } else {
-        const valAmount: number = parseFloat(
-          amount.replace(",", ".").replace(/\s/g, "")
-        );
-
-        // console.log(selectedPerson);
-        if (selectedPerson.snapscan_link) {
-          handlePress(selectedPerson, valAmount)
-            .then(() => {
-              navigation.navigate("Confirm Sending");
-            })
-            .catch((err) => {
-              Alert.alert("Error sending");
-            });
-        } else {
-          Alert.alert("Selected Person has no snapscan link");
-        }
+        handleBack();
       }
     } else {
       Alert.alert("Please select all values");
@@ -240,10 +220,6 @@ const SendScreen = ({
 
     // add to database
     // navigate back to wallet
-  };
-
-  const handleSearchNameChange = (text: string) => {
-    setSearchName(text);
   };
 
   const handleDescriptionChange = (text: string) => {
@@ -279,7 +255,7 @@ const SendScreen = ({
     { label: "Cash", value: "Cash" },
   ];
 
-  const [payment, setPayment] = useState<boolean>(false);
+  const [payment, setPayment] = useState<string>("");
 
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -317,100 +293,199 @@ const SendScreen = ({
         height: "100%",
       }}
     >
-      <View style={newStyles.container}>
-        {renderLabel("To")}
-        <Dropdown
-          style={[newStyles.dropdown, isFocus && { borderColor: "#00db22" }]}
-          placeholderStyle={newStyles.placeholderStyle}
-          selectedTextStyle={newStyles.selectedTextStyle}
-          inputSearchStyle={newStyles.inputSearchStyle}
-          iconStyle={newStyles.iconStyle}
-          data={friends.map((f: any) => {
-            return { label: f.full_name, value: f };
-          })}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="label"
-          placeholder={!isFocus ? "To" : ""}
-          searchPlaceholder="Search..."
-          value={value}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
-          onChange={(item: any) => {
-            setSelectedPerson(item.value);
-            setValue(item.label);
-            setIsFocus(false);
-          }}
-        />
-      </View>
-
-      {!searchNameFocus && (
-        <FloatingTextInput
-          label="Amount"
-          keyboardType="numeric"
-          value={amount}
-          handleChange={handleChange}
-        />
-      )}
-      {!searchNameFocus && (
-        <FloatingTextInput
-          label="What is this for?"
-          value={description}
-          handleChange={handleDescriptionChange}
-        />
-      )}
-
-      <View style={newStyles.container}>
-        {renderPaymentLabel("Payment Method")}
-        <Dropdown
-          style={[
-            newStyles.dropdown,
-            isPaymentFocus && { borderColor: "#00db22" },
-          ]}
-          placeholderStyle={newStyles.placeholderStyle}
-          selectedTextStyle={newStyles.selectedTextStyle}
-          inputSearchStyle={newStyles.inputSearchStyle}
-          iconStyle={newStyles.iconStyle}
-          data={data}
-          search={false}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={!isPaymentFocus ? "Payment Method" : ""}
-          value={payment}
-          onFocus={() => setIsPaymentFocus(true)}
-          onBlur={() => setIsPaymentFocus(false)}
-          onChange={(item: any) => {
-            setPayment(item.value);
-            setIsPaymentFocus(false);
-          }}
-        />
-      </View>
-
-      <Pressable
-        style={({ pressed }) => [
-          {
-            backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-          },
-          styles.walletSendWrapper,
-        ]}
-        onPress={send}
-      >
-        {({ pressed }) => {
-          return (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row-reverse",
-                justifyContent: "center",
+      {screen === "Pay" && (
+        <View style={{ height: "100%" }}>
+          <View style={newStyles.container}>
+            {renderLabel("To")}
+            <Dropdown
+              style={[
+                newStyles.dropdown,
+                isFocus && { borderColor: "#00db22" },
+              ]}
+              placeholderStyle={newStyles.placeholderStyle}
+              selectedTextStyle={newStyles.selectedTextStyle}
+              inputSearchStyle={newStyles.inputSearchStyle}
+              iconStyle={newStyles.iconStyle}
+              data={friends.map((f: any) => {
+                return { label: f.full_name, value: f };
+              })}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="label"
+              placeholder={!isFocus ? "To" : ""}
+              searchPlaceholder="Search..."
+              value={value}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={(item: any) => {
+                setSelectedPerson(item.value);
+                setValue(item.label);
+                setIsFocus(false);
               }}
-            >
-              <Text style={styles.sendButton}>Send</Text>
+            />
+          </View>
+
+          <FloatingTextInput
+            label="Amount"
+            keyboardType="numeric"
+            value={amount}
+            handleChange={handleChange}
+          />
+
+          <FloatingTextInput
+            label="What is this for?"
+            value={description}
+            handleChange={handleDescriptionChange}
+          />
+
+          <View style={newStyles.container}>
+            {renderPaymentLabel("Payment Method")}
+            <Dropdown
+              style={[
+                newStyles.dropdown,
+                isPaymentFocus && { borderColor: "#00db22" },
+              ]}
+              placeholderStyle={newStyles.placeholderStyle}
+              selectedTextStyle={newStyles.selectedTextStyle}
+              inputSearchStyle={newStyles.inputSearchStyle}
+              iconStyle={newStyles.iconStyle}
+              data={data}
+              search={false}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isPaymentFocus ? "Payment Method" : ""}
+              value={payment}
+              onFocus={() => setIsPaymentFocus(true)}
+              onBlur={() => setIsPaymentFocus(false)}
+              onChange={(item: any) => {
+                setPayment(item.value);
+                setIsPaymentFocus(false);
+              }}
+            />
+          </View>
+
+          <Pressable
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+              },
+              styles.walletSendWrapper,
+            ]}
+            onPress={handleNext}
+          >
+            {({ pressed }) => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row-reverse",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={styles.sendButton}>Send</Text>
+                </View>
+              );
+            }}
+          </Pressable>
+        </View>
+      )}
+      {screen === "SnapScan" && (
+        <View style={{ height: "100%" }}>
+          <KeyboardAwareScrollView
+            style={{ flex: 1, width: "100%" }}
+            contentContainerStyle={{
+              alignContent: "center",
+              justifyContent: "center",
+              marginTop: "60%",
+            }}
+            keyboardShouldPersistTaps="always"
+          >
+            <Text style={{ fontSize: 20, textAlign: "center" }}>
+              Did you complete the transaction on SnapScan?
+            </Text>
+            <View style={styles.awaitRow}>
+              <TouchableOpacity style={styles.awaitButton} onPress={handleBack}>
+                <Text style={styles.buttonTitle}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.awaitButton} onPress={send}>
+                <Text style={styles.buttonTitle}>Continue</Text>
+              </TouchableOpacity>
             </View>
-          );
-        }}
-      </Pressable>
+          </KeyboardAwareScrollView>
+        </View>
+      )}
+      {screen === "Bank" && (
+        <View style={{ height: "100%" }}>
+          <KeyboardAwareScrollView
+            style={{ flex: 1, width: "100%" }}
+            contentContainerStyle={{
+              alignContent: "center",
+              justifyContent: "center",
+              marginTop: "20%",
+            }}
+            keyboardShouldPersistTaps="always"
+          >
+            <Text style={{ fontSize: 20, textAlign: "center" }}>
+              Copy the details below and send on your banking app.
+            </Text>
+            <View>
+              <FloatingTextInput
+                label="Bank"
+                border={1}
+                value={bankDetails.bank || ""}
+                editable={false}
+                handleChange={() => {}}
+              />
+              <FontAwesomeIcon
+                icon={faCopy}
+                size={18}
+                color={"gray"}
+                style={{ position: "absolute", top: 45, marginLeft: 330 }}
+              />
+            </View>
+            <View>
+              <FloatingTextInput
+                label="Account Name"
+                border={1}
+                value={bankDetails.account_name || ""}
+                editable={false}
+                handleChange={() => {}}
+              />
+              <FontAwesomeIcon
+                icon={faCopy}
+                size={18}
+                color={"gray"}
+                style={{ position: "absolute", top: 45, marginLeft: 330 }}
+              />
+            </View>
+            <View>
+              <FloatingTextInput
+                label="Account Number"
+                border={1}
+                value={bankDetails.account_number || ""}
+                editable={false}
+                handleChange={() => {}}
+              />
+              <FontAwesomeIcon
+                icon={faCopy}
+                size={18}
+                color={"gray"}
+                style={{ position: "absolute", top: 45, marginLeft: 330 }}
+              />
+            </View>
+            <View style={styles.awaitRow}>
+              <TouchableOpacity style={styles.awaitButton} onPress={handleBack}>
+                <Text style={styles.buttonTitle}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.awaitButton} onPress={send}>
+                <Text style={styles.buttonTitle}>Send</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAwareScrollView>
+        </View>
+      )}
     </View>
   );
 };
