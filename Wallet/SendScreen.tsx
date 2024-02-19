@@ -6,6 +6,7 @@ import {
   Linking,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useCallback, useEffect, useState } from "react";
@@ -41,13 +42,14 @@ const SendScreen = ({
   const [people, setPeople] = useState<any>([]);
   const [friends, setFriends] = useState<any>([]);
   const [selectedPerson, setSelectedPerson] = useState<any>(null);
-  const [bankDetails, setBankDetails] = useState<any>({});
+  const [bankDetails, setBankDetails] = useState<any>(null);
 
   useEffect(() => {
     getFriends();
   }, []);
 
   const getBankDetails = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from("profiles")
       .select("bank, account_name, account_number")
@@ -55,7 +57,9 @@ const SendScreen = ({
 
     if (data && !error) {
       setBankDetails(data[0]);
+      setLoading(false);
     } else {
+      setLoading(false);
       Alert.alert("Error getting bank details");
     }
   };
@@ -86,7 +90,7 @@ const SendScreen = ({
           Alert.alert("Selected Person has no snapscan link");
         }
         return "SnapScan";
-      } else if (prevState === "Pay" && payment === "SnapScan") {
+      } else if (prevState === "Pay" && payment === "Cash") {
         return "Cash";
       } else {
         return "Pay";
@@ -153,7 +157,6 @@ const SendScreen = ({
 
   const handleChange = (text: string) => {
     const amount = addSpace(handleDecimalsOnValue(removeNonNumeric(text)));
-    // console.log(amount);
 
     setAmount(addSpace(handleDecimalsOnValue(removeNonNumeric(text))));
   };
@@ -288,6 +291,14 @@ const SendScreen = ({
     await Clipboard.setStringAsync(text);
   };
 
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size="large" color="#00cc1f" />
+      </View>
+    );
+  }
+
   return (
     <View
       style={{
@@ -421,7 +432,7 @@ const SendScreen = ({
           </KeyboardAwareScrollView>
         </View>
       )}
-      {screen === "Bank" && (
+      {screen === "Bank" && bankDetails && (
         <View style={{ height: "100%" }}>
           <KeyboardAwareScrollView
             style={{ flex: 1, width: "100%" }}
@@ -436,73 +447,67 @@ const SendScreen = ({
               Copy the details below and send on your banking app.
             </Text>
             <TouchableOpacity
-              onPress={() => {
-                copyToClipboard(bankDetails.bank);
+              onPress={async () => {
+                await copyToClipboard(bankDetails.bank);
                 setBankCopied(true);
               }}
             >
-              <View>
-                <FloatingTextInput
-                  label="Bank"
-                  border={1}
-                  value={bankDetails.bank || ""}
-                  editable={false}
-                  myColor={bankCopied ? "#8dfc9e" : "#B9C4CA"}
-                  handleChange={() => {}}
-                />
-                <FontAwesomeIcon
-                  icon={bankCopied ? faCheck : faCopy}
-                  size={18}
-                  color={bankCopied ? "#8dfc9e" : "#B9C4CA"}
-                  style={{ position: "absolute", top: 45, marginLeft: 330 }}
-                />
-              </View>
+              <FloatingTextInput
+                label="Bank"
+                border={1}
+                value={bankDetails.bank || ""}
+                editable={false}
+                myColor={bankCopied ? "#8dfc9e" : "#B9C4CA"}
+                handleChange={() => {}}
+              />
+              <FontAwesomeIcon
+                icon={bankCopied ? faCheck : faCopy}
+                size={18}
+                color={bankCopied ? "#8dfc9e" : "#B9C4CA"}
+                style={{ position: "absolute", top: 45, marginLeft: 330 }}
+              />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
-                copyToClipboard(bankDetails.account_name);
+              onPress={async () => {
+                await copyToClipboard(bankDetails.account_name);
                 setAccountNameCopied(true);
               }}
             >
-              <View>
-                <FloatingTextInput
-                  label="Account Name"
-                  border={1}
-                  value={bankDetails.account_name || ""}
-                  editable={false}
-                  myColor={accountNameCopied ? "#8dfc9e" : "#B9C4CA"}
-                  handleChange={() => {}}
-                />
-                <FontAwesomeIcon
-                  icon={accountNameCopied ? faCheck : faCopy}
-                  size={18}
-                  color={accountNameCopied ? "#8dfc9e" : "#B9C4CA"}
-                  style={{ position: "absolute", top: 45, marginLeft: 330 }}
-                />
-              </View>
+              <FloatingTextInput
+                label="Account Name"
+                border={1}
+                value={bankDetails.account_name || ""}
+                editable={false}
+                myColor={accountNameCopied ? "#8dfc9e" : "#B9C4CA"}
+                handleChange={() => {}}
+              />
+              <FontAwesomeIcon
+                icon={accountNameCopied ? faCheck : faCopy}
+                size={18}
+                color={accountNameCopied ? "#8dfc9e" : "#B9C4CA"}
+                style={{ position: "absolute", top: 45, marginLeft: 330 }}
+              />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
-                copyToClipboard(bankDetails.account_number);
+              onPress={async () => {
+                await copyToClipboard(bankDetails.account_number);
                 setAccountNumberCopied(true);
               }}
             >
-              <View>
-                <FloatingTextInput
-                  label="Account Number"
-                  border={1}
-                  value={bankDetails.account_number || ""}
-                  editable={false}
-                  myColor={accountNumberCopied ? "#8dfc9e" : "#B9C4CA"}
-                  handleChange={() => {}}
-                />
-                <FontAwesomeIcon
-                  icon={accountNumberCopied ? faCheck : faCopy}
-                  size={18}
-                  color={accountNumberCopied ? "#8dfc9e" : "#B9C4CA"}
-                  style={{ position: "absolute", top: 45, marginLeft: 330 }}
-                />
-              </View>
+              <FloatingTextInput
+                label="Account Number"
+                border={1}
+                value={bankDetails.account_number || ""}
+                editable={false}
+                myColor={accountNumberCopied ? "#8dfc9e" : "#B9C4CA"}
+                handleChange={() => {}}
+              />
+              <FontAwesomeIcon
+                icon={accountNumberCopied ? faCheck : faCopy}
+                size={18}
+                color={accountNumberCopied ? "#8dfc9e" : "#B9C4CA"}
+                style={{ position: "absolute", top: 45, marginLeft: 330 }}
+              />
             </TouchableOpacity>
             <View style={styles.awaitRow}>
               <TouchableOpacity style={styles.awaitButton} onPress={handleBack}>
@@ -510,6 +515,31 @@ const SendScreen = ({
               </TouchableOpacity>
               <TouchableOpacity style={styles.awaitButton} onPress={send}>
                 <Text style={styles.buttonTitle}>Send</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAwareScrollView>
+        </View>
+      )}
+      {screen === "Cash" && (
+        <View style={{ height: "100%" }}>
+          <KeyboardAwareScrollView
+            style={{ flex: 1, width: "100%" }}
+            contentContainerStyle={{
+              alignContent: "center",
+              justifyContent: "center",
+              marginTop: "60%",
+            }}
+            keyboardShouldPersistTaps="always"
+          >
+            <Text style={{ fontSize: 20, textAlign: "center", margin: 10 }}>
+              Did you complete the transaction with Cash?
+            </Text>
+            <View style={styles.awaitRow}>
+              <TouchableOpacity style={styles.awaitButton} onPress={handleBack}>
+                <Text style={styles.buttonTitle}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.awaitButton} onPress={send}>
+                <Text style={styles.buttonTitle}>Continue</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAwareScrollView>
