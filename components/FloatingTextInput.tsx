@@ -14,6 +14,7 @@ type Props = React.ComponentProps<typeof TextInput> & {
   errorText?: string | null;
   secureTextEntry?: boolean | null;
   border?: number;
+  myColor?: string;
   handleChange: (text: string) => void;
 };
 
@@ -25,6 +26,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     value,
     style,
     border = 1,
+    myColor = "#B9C4CA",
     onBlur,
     onFocus,
     handleChange,
@@ -44,7 +46,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     }).start();
   }, [focusAnim, isFocused, value]);
 
-  let color = isFocused ? "#00db22" : "#B9C4CA";
+  let color = isFocused ? "#00db22" : myColor;
   if (errorText) {
     color = "#B00020";
   }

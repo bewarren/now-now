@@ -1,11 +1,7 @@
 import {
-  FlatList,
-  SafeAreaView,
-  TextInput,
   View,
   Text,
   Alert,
-  ActivityIndicator,
   Pressable,
   Linking,
   StyleSheet,
@@ -14,6 +10,7 @@ import {
 import { supabase } from "../lib/supabase";
 import { useCallback, useEffect, useState } from "react";
 import styles from "../styles";
+import * as Clipboard from "expo-clipboard";
 
 import { Session } from "@supabase/supabase-js";
 import FloatingTextInput from "../components/FloatingTextInput";
@@ -22,7 +19,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCopy } from "@fortawesome/free-solid-svg-icons";
 
 const SendScreen = ({
   session,
@@ -283,6 +280,14 @@ const SendScreen = ({
     return null;
   };
 
+  const [bankCopied, setBankCopied] = useState(false);
+  const [accountNameCopied, setAccountNameCopied] = useState(false);
+  const [accountNumberCopied, setAccountNumberCopied] = useState(false);
+
+  const copyToClipboard = async (text: string) => {
+    await Clipboard.setStringAsync(text);
+  };
+
   return (
     <View
       style={{
@@ -430,51 +435,75 @@ const SendScreen = ({
             <Text style={{ fontSize: 20, textAlign: "center" }}>
               Copy the details below and send on your banking app.
             </Text>
-            <View>
-              <FloatingTextInput
-                label="Bank"
-                border={1}
-                value={bankDetails.bank || ""}
-                editable={false}
-                handleChange={() => {}}
-              />
-              <FontAwesomeIcon
-                icon={faCopy}
-                size={18}
-                color={"gray"}
-                style={{ position: "absolute", top: 45, marginLeft: 330 }}
-              />
-            </View>
-            <View>
-              <FloatingTextInput
-                label="Account Name"
-                border={1}
-                value={bankDetails.account_name || ""}
-                editable={false}
-                handleChange={() => {}}
-              />
-              <FontAwesomeIcon
-                icon={faCopy}
-                size={18}
-                color={"gray"}
-                style={{ position: "absolute", top: 45, marginLeft: 330 }}
-              />
-            </View>
-            <View>
-              <FloatingTextInput
-                label="Account Number"
-                border={1}
-                value={bankDetails.account_number || ""}
-                editable={false}
-                handleChange={() => {}}
-              />
-              <FontAwesomeIcon
-                icon={faCopy}
-                size={18}
-                color={"gray"}
-                style={{ position: "absolute", top: 45, marginLeft: 330 }}
-              />
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                copyToClipboard(bankDetails.bank);
+                setBankCopied(true);
+              }}
+            >
+              <View>
+                <FloatingTextInput
+                  label="Bank"
+                  border={1}
+                  value={bankDetails.bank || ""}
+                  editable={false}
+                  myColor={bankCopied ? "#8dfc9e" : "#B9C4CA"}
+                  handleChange={() => {}}
+                />
+                <FontAwesomeIcon
+                  icon={bankCopied ? faCheck : faCopy}
+                  size={18}
+                  color={bankCopied ? "#8dfc9e" : "#B9C4CA"}
+                  style={{ position: "absolute", top: 45, marginLeft: 330 }}
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                copyToClipboard(bankDetails.account_name);
+                setAccountNameCopied(true);
+              }}
+            >
+              <View>
+                <FloatingTextInput
+                  label="Account Name"
+                  border={1}
+                  value={bankDetails.account_name || ""}
+                  editable={false}
+                  myColor={accountNameCopied ? "#8dfc9e" : "#B9C4CA"}
+                  handleChange={() => {}}
+                />
+                <FontAwesomeIcon
+                  icon={accountNameCopied ? faCheck : faCopy}
+                  size={18}
+                  color={accountNameCopied ? "#8dfc9e" : "#B9C4CA"}
+                  style={{ position: "absolute", top: 45, marginLeft: 330 }}
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                copyToClipboard(bankDetails.account_number);
+                setAccountNumberCopied(true);
+              }}
+            >
+              <View>
+                <FloatingTextInput
+                  label="Account Number"
+                  border={1}
+                  value={bankDetails.account_number || ""}
+                  editable={false}
+                  myColor={accountNumberCopied ? "#8dfc9e" : "#B9C4CA"}
+                  handleChange={() => {}}
+                />
+                <FontAwesomeIcon
+                  icon={accountNumberCopied ? faCheck : faCopy}
+                  size={18}
+                  color={accountNumberCopied ? "#8dfc9e" : "#B9C4CA"}
+                  style={{ position: "absolute", top: 45, marginLeft: 330 }}
+                />
+              </View>
+            </TouchableOpacity>
             <View style={styles.awaitRow}>
               <TouchableOpacity style={styles.awaitButton} onPress={handleBack}>
                 <Text style={styles.buttonTitle}>Cancel</Text>
