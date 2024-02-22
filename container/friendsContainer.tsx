@@ -12,7 +12,13 @@ const FriendsContainer = ({ session }: { session: Session }) => {
   const requestFriendsName = "Friend Requests";
 
   return (
-    <Stack.Navigator initialRouteName={friendsListName}>
+    <Stack.Navigator
+      initialRouteName={friendsListName}
+      screenOptions={{
+        headerShown: true,
+        headerShadowVisible: false,
+      }}
+    >
       <Stack.Screen
         name={friendsListName}
         options={{ headerShown: true, title: "My Friends" }}

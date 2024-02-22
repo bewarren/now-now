@@ -19,6 +19,7 @@ const WalletContainer = ({ session }: { session: Session }) => {
       initialRouteName={walletName}
       screenOptions={{
         headerShown: true,
+        headerShadowVisible: false,
       }}
     >
       <Stack.Screen

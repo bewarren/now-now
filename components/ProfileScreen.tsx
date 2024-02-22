@@ -19,7 +19,14 @@ import * as FileSystem from "expo-file-system";
 import { decode } from "base64-arraybuffer";
 import { FileObject } from "@supabase/storage-js";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowAltCircleRight,
+  faArrowRight,
+  faArrowRightLong,
+  faBackward,
+  faChevronRight,
+  faEdit,
+} from "@fortawesome/free-solid-svg-icons";
 import FloatingTextInput from "./FloatingTextInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -161,6 +168,9 @@ const ProfileScreen = ({ session }: { session: Session }) => {
   const getInitals = (fullName: any) => {
     return fullName.match(/(\b\S)?/g).join("");
   };
+
+  const [displayPaymentDetails, setDisplayPaymentDetails] =
+    useState<boolean>(false);
 
   if (loading) {
     return (
@@ -305,13 +315,35 @@ const ProfileScreen = ({ session }: { session: Session }) => {
           editable={false}
           handleChange={() => {}}
         />
-        <FloatingTextInput
+        {/* <FloatingTextInput
           label="Snapscan Link"
           border={0}
           value={snapScanLink || ""}
           editable={edit}
           handleChange={handleSnapScanLinkChange}
-        />
+        /> */}
+
+        <TouchableOpacity
+          onPress={() => {}}
+          style={{
+            marginHorizontal: 30,
+            marginVertical: 2,
+            alignContent: "center",
+            alignItems: "center",
+            padding: 15,
+            borderColor: "#00db22",
+            borderWidth: 1,
+            borderRadius: 12,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={{ fontSize: 18, color: "#00db22", fontWeight: "600" }}>
+            Payment details
+          </Text>
+          <FontAwesomeIcon icon={faChevronRight} size={14} color={"#00db22"} />
+        </TouchableOpacity>
 
         {edit && (
           <View style={styles.profileButtons}>

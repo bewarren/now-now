@@ -40,13 +40,14 @@ const MainContainer = ({ session }: { session: Session }) => {
         screenOptions={{
           headerShown: true,
           tabBarActiveTintColor: "#00cc1f",
-
           tabBarShowLabel: true,
           tabBarStyle: {
             backgroundColor: "white",
             position: "absolute",
             height: 90,
+            borderTopWidth: 0,
           },
+          headerShadowVisible: false,
         }}
       >
         <Tab.Screen

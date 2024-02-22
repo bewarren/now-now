@@ -7,6 +7,7 @@ import {
   Alert,
   ActivityIndicator,
   Pressable,
+  StyleSheet,
 } from "react-native";
 import { supabase } from "../lib/supabase";
 import { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Session } from "@supabase/supabase-js";
 import FloatingTextInput from "../components/FloatingTextInput";
+import { Dropdown } from "react-native-element-dropdown";
 
 type ItemProps = {
   name: string | null;
@@ -226,6 +228,20 @@ const RequestScreen = ({
     setDescription(text);
   };
 
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+
+  const renderLabel = (text: string) => {
+    if (value || isFocus) {
+      return (
+        <Text style={[newStyles.label, isFocus && { color: "#00db22" }]}>
+          {text}
+        </Text>
+      );
+    }
+    return null;
+  };
+
   return (
     <View
       style={{
@@ -237,92 +253,68 @@ const RequestScreen = ({
       }}
     >
       {/* search list */}
-      <FloatingTextInput
-        label="From"
-        value={searchName}
-        handleChange={handleSearchNameChange}
-        onFocus={() => {
-          setSearchNameFocus(true);
-        }}
-        onBlur={() => {
-          if (people.length === 0 || searchName === "") {
-            setSelectedPerson(null);
-            setSearchNameFocus(false);
-            setSearchName("");
-          }
-        }}
-      />
-
-      {!searchNameFocus && (
-        <FloatingTextInput
-          label="Amount"
-          keyboardType="numeric"
-          value={amount}
-          handleChange={handleChange}
-        />
-      )}
-      {!searchNameFocus && (
-        <FloatingTextInput
-          label="What is this for?"
-          value={description}
-          handleChange={handleDescriptionChange}
-        />
-      )}
-      {!searchNameFocus && (
-        <Pressable
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
-            },
-            styles.walletSendWrapper,
-          ]}
-          onPress={request}
-        >
-          {({ pressed }) => {
-            return (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row-reverse",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={styles.sendButton}>Request</Text>
-              </View>
-            );
+      <View style={newStyles.container}>
+        {renderLabel("From")}
+        <Dropdown
+          style={[newStyles.dropdown, isFocus && { borderColor: "#00db22" }]}
+          placeholderStyle={newStyles.placeholderStyle}
+          selectedTextStyle={newStyles.selectedTextStyle}
+          inputSearchStyle={newStyles.inputSearchStyle}
+          iconStyle={newStyles.iconStyle}
+          data={friends.map((f: any) => {
+            return { label: f.full_name, value: f };
+          })}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="label"
+          placeholder={!isFocus ? "From" : ""}
+          searchPlaceholder="Search..."
+          value={value}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(item: any) => {
+            setSelectedPerson(item.value);
+            setValue(item.label);
+            setIsFocus(false);
           }}
-        </Pressable>
-      )}
-      {/* list of people */}
+        />
+      </View>
 
-      {searchNameFocus && (
-        <SafeAreaView style={styles.listContainer}>
-          {people.length > 0 && searchName !== "" && (
-            <FlatList
-              nestedScrollEnabled
-              key={1}
-              data={people}
-              renderItem={({ item }) => {
-                return (
-                  <Item
-                    name={item?.full_name}
-                    select={() => {
-                      selectHandler(item);
-                    }}
-                  />
-                );
+      <FloatingTextInput
+        label="Amount"
+        keyboardType="numeric"
+        value={amount}
+        handleChange={handleChange}
+      />
+      <FloatingTextInput
+        label="What is this for?"
+        value={description}
+        handleChange={handleDescriptionChange}
+      />
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? "#61fa78" : "#8dfc9e",
+          },
+          styles.walletSendWrapper,
+        ]}
+        onPress={request}
+      >
+        {({ pressed }) => {
+          return (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row-reverse",
+                justifyContent: "center",
               }}
-              keyExtractor={(item) => item.id}
-            />
-          )}
-
-          {loading && (
-            <View style={[styles.horizontal]}>
-              <ActivityIndicator size="large" color="#00cc1f" />
+            >
+              <Text style={styles.sendButton}>Request</Text>
             </View>
-          )}
-        </SafeAreaView>
-      )}
+          );
+        }}
+      </Pressable>
 
       {/* list of friend request button on clicking */}
     </View>
@@ -330,3 +322,49 @@ const RequestScreen = ({
 };
 
 export default RequestScreen;
+
+const newStyles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    padding: 16,
+  },
+  dropdown: {
+    height: 65,
+    borderColor: "#B9C4CA",
+
+    borderWidth: 1,
+    borderRadius: 12,
+    margin: 5,
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: "absolute",
+    color: "#B9C4CA",
+    backgroundColor: "white",
+    left: 32,
+    top: 19,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color: "#B9C4CA",
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+    borderRadius: 8,
+  },
+});
