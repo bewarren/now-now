@@ -315,13 +315,13 @@ const ProfileScreen = ({ session }: { session: Session }) => {
           editable={false}
           handleChange={() => {}}
         />
-        {/* <FloatingTextInput
+        <FloatingTextInput
           label="Snapscan Link"
           border={0}
           value={snapScanLink || ""}
           editable={edit}
           handleChange={handleSnapScanLinkChange}
-        /> */}
+        />
 
         <TouchableOpacity
           onPress={() => {}}
