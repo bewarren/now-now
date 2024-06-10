@@ -1,3 +1,3 @@
-# now-now
+# Now Now
 
-Payment facilitator because all the other options are bad
+A peer to peer payments app side project
